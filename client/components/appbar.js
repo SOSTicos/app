@@ -136,15 +136,17 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
             {title}
           </Typography>
 
-          <IconButton
-            edge="end"
-            color="primary"
-            aria-label="profile"
-            onClick={() => navigate('/profile')}
-            className={styles.menuButton}
-          >
-            <AccountCircleIcon style={{ fontSize: 40 }} />
-          </IconButton>
+          {isAuth && (
+            <IconButton
+              edge="end"
+              color="primary"
+              aria-label="profile"
+              onClick={() => navigate('/profile')}
+              className={styles.menuButton}
+            >
+              <AccountCircleIcon style={{ fontSize: 40 }} />
+            </IconButton>
+          )}
         </Toolbar>
       </BaseAppBar>
     </div>

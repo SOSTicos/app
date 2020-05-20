@@ -113,7 +113,6 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
   }
 
   const onSubmit = async (data) => {
-    console.log('DATA', data)
     try {
       setSubmitting(true)
       data = normalize(data)
@@ -288,10 +287,7 @@ export const getServerSideProps = async (ctx) => {
   try {
     const host = getHost(ctx)
     const headers = getHeaders(ctx)
-    console.log('HOST', host, headers)
     const data = await api.get(`${host}/api/users/${id}`, {}, { headers })
-    console.log('SESSION ====>', session, id, data)
-
     return { props: omitBy({ ...session, data }, isNil) }
   } catch (_) {
     console.log(_)

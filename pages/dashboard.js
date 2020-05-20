@@ -16,8 +16,6 @@ const Dashboard = ({ user }) => {
     if (!user) router.replace('/signin')
   }, [user])
 
-  console.log('USER', user)
-
   return (
     <Layout user={user} my={2}>
       <Typography variant="h1" gutterBottom align="center">

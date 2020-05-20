@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { useEffect, Fragment, useState } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
@@ -62,10 +62,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const CenterList = ({ user, centers }) => {
+const CenterList = ({ user, centers = [] }) => {
   const router = useRouter()
   const styles = useStyles()
   const [keyword, setKeyword] = useState()
+
+  useEffect(() => {
+    if (!user) router.replace('/signin')
+  }, [user])
 
   const onSearch = async (keyword) => {
     setKeyword(keyword)

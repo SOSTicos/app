@@ -34,8 +34,6 @@ export default async ({ path, method = 'GET', token, body, query, headers = {} }
       headers: requestHeaders,
     })
 
-    console.log('HEADERS', response.headers)
-
     const type = requestHeaders['Content-Type']
 
     if (response.status >= 200 && response.status < 300) {

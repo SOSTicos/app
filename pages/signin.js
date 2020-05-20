@@ -29,8 +29,6 @@ const Signin = ({}) => {
   const router = useRouter()
   const styles = useStyles()
 
-  console.log('AUTH', isAuth)
-
   useEffect(() => {
     if (isAuth) router.replace('/')
   }, [isAuth])

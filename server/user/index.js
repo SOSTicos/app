@@ -4,7 +4,7 @@ const { createError } = require('../lib/utils')
 const { isProvince, isCanton, isDistrict } = require('../../shared/lib/locations')
 const { isPhone, toPhone } = require('../../shared/lib/utils')
 
-module.exports = ({ db }) => {
+module.exports = ({ db, superadmin, seed }) => {
   const roles = ['admin', 'coordinator', 'carrier', 'beneficiary', 'member']
 
   const fields = [
@@ -46,6 +46,18 @@ module.exports = ({ db }) => {
     }
   }
 
+  const seedData = async () => {
+    const users = await db.get('users')
+
+    try {
+      const query = { email: superadmin }
+      const data = normalize({ ...query, role: 'superadmin' })
+      await users.updateOne(query, data, { upsert: true })
+    } catch (_) {
+      console.log(_)
+    }
+  }
+
   /**
    * Fetch users.
    *
@@ -56,7 +68,6 @@ module.exports = ({ db }) => {
 
   const fetch = async ({ user, id, ...query }) => {
     user.can('read', 'user', { _id: id })
-
     const users = await db.get('users')
     const res = id ? await users.findById(id) : await users.findMany(query)
     if (!res) throw createError('No se encontró el usuario', 404)
@@ -161,6 +172,8 @@ module.exports = ({ db }) => {
   }
 
   setIndexes().catch(console.log)
+
+  if (seed) seedData()
 
   return { fetch, create, update, destroy, fields }
 }

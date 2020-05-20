@@ -69,7 +69,6 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
   }
 
   const onSubmit = async (data) => {
-    console.log('DATA', data)
     try {
       setSubmitting(true)
       data = normalize(data)

@@ -49,6 +49,10 @@ const CenterCreate = ({ user }) => {
   const styles = useStyles()
   const { enqueueSnackbar: notify } = useSnackbar()
 
+  useEffect(() => {
+    if (!user) router.replace('/signin')
+  }, [user])
+
   const { setValue, watch, control, handleSubmit, errors } = useForm({
     mode: 'onChange',
     defaultValues,

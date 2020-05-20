@@ -125,11 +125,7 @@ module.exports = ({ db, secret, signInTokenTTL, accessTokenTTL }) => {
     const users = await db.get('users')
 
     try {
-      console.log(req.headers)
       const token = getRequestToken(req)
-
-      console.log('TOKEN ===>', token)
-
       const auth = await verifyToken(token, secret)
       const user = await users.findById(auth._id)
 

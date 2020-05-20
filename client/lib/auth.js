@@ -31,11 +31,8 @@ export const getSession = async (ctx) => {
       centers = await get(`${host}/api/centers`, {}, options)
     }
 
-    console.log('USER ====>', centers)
-
     return omitBy({ user, token, centers }, isNil)
   } catch (_) {
-    console.log(_)
     return {}
   }
 }

@@ -21,3 +21,9 @@ export const getHost = (ctx) => {
   const r = window.location.href.match(/^(https?:)?\/\/[^/]+/i)
   return r ? r[0] : ''
 }
+
+export const createError = (message, code = 400) => {
+  const error = new Error(message)
+  error.statusCode = code
+  return error
+}

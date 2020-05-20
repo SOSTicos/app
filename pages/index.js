@@ -11,8 +11,6 @@ const Home = ({ user }) => {
   const router = useRouter()
   const styles = useStyles()
 
-  console.log('USER', user)
-
   return (
     <Layout user={user} my={6}>
       <Typography component="div" align="center" gutterBottom>

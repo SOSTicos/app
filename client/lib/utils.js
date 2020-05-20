@@ -43,8 +43,6 @@ export const getHost = (ctx) => {
     return `${protocol}://${req.headers.host}`
   }
 
-  console.log('ESTOY LLEGANDO AQUI EN LA PA AP P P', ctx)
-
   const r = window.location.href.match(/^(https?:)?\/\/[^/]+/i)
   return r ? r[0] : ''
 }

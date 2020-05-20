@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { useEffect, Fragment, useState } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
@@ -49,12 +49,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const VolunteerList = ({ user, users }) => {
+const VolunteerList = ({ user, users = [] }) => {
   const router = useRouter()
   const styles = useStyles()
   const [keyword, setKeyword] = useState()
   const [type, setType] = useState('')
   const matches = useMediaQuery('(min-width:400px)')
+
+  useEffect(() => {
+    if (!user) router.replace('/signin')
+  }, [user])
 
   const onSearch = async (keyword) => {
     setKeyword(keyword)
@@ -132,7 +136,12 @@ export const getServerSideProps = async (ctx) => {
   const session = await getSession(ctx)
   const headers = getHeaders(ctx)
   const host = getHost(ctx)
-  const users = session.user ? await api.get(`${host}/api/users`, {}, { headers }) : []
+
+  let users = []
+
+  try {
+    users = session.user ? await api.get(`${host}/api/users`, {}, { headers }) : []
+  } catch (_) {}
 
   // console.log('users', session, users)
   return { props: { ...session, users } }
