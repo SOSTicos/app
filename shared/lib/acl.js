@@ -24,6 +24,9 @@ const permissions = {
   admin(_, { can }) {
     can('manage', 'all')
   },
+  superadmin(_, { can }) {
+    can('manage', 'all')
+  },
 }
 
 /**
