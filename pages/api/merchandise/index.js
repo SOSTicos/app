@@ -5,11 +5,19 @@ const api = createApi()
 const { protect } = api.auth
 
 const fetch = ({ user, query }) => {
-  return api.users.fetch({ ...query, user })
+  return api.merchandise.fetch({ ...query, user })
 }
 
 const create = ({ user, body }) => {
-  return api.users.create({ ...body, user })
+  return api.merchandise.create({ ...body, user }, api.fileStorage)
+}
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
 }
 
 export default λ(

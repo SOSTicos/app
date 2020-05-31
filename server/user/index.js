@@ -5,7 +5,7 @@ const { isProvince, isCanton, isDistrict } = require('../../shared/lib/locations
 const { isPhone, toPhone } = require('../../shared/lib/utils')
 
 module.exports = ({ db, superadmin, seed }) => {
-  const roles = ['admin', 'coordinator', 'carrier', 'beneficiary', 'member']
+  const roles = new Set(['admin', 'coordinator', 'carrier', 'beneficiary', 'member'])
 
   const fields = [
     'name',
@@ -53,8 +53,8 @@ module.exports = ({ db, superadmin, seed }) => {
       const query = { email: superadmin }
       const data = normalize({ ...query, role: 'superadmin' })
       await users.updateOne(query, data, { upsert: true })
-    } catch (_) {
-      console.log(_)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -69,9 +69,9 @@ module.exports = ({ db, superadmin, seed }) => {
   const fetch = async ({ user, id, ...query }) => {
     user.can('read', 'user', { _id: id })
     const users = await db.get('users')
-    const res = id ? await users.findById(id) : await users.findMany(query)
-    if (!res) throw createError('No se encontró el usuario', 404)
-    return res
+    const result = id ? await users.findById(id) : await users.findMany(query)
+    if (!result) throw createError('No se encontró el usuario', 404)
+    return result
   }
 
   /**
@@ -89,7 +89,7 @@ module.exports = ({ db, superadmin, seed }) => {
 
     if (!isEmail(data.email)) {
       throw createError('Email inválido')
-    } else if ('role' in data && !roles.includes(data.role)) {
+    } else if ('role' in data && !roles.has(data.role)) {
       throw createError('Rol inválido')
     } else if (data.name && !isString(data.name)) {
       throw createError('Nombre inválido')
@@ -134,7 +134,7 @@ module.exports = ({ db, superadmin, seed }) => {
       throw createError('Centro de acopio inválido')
     } else if ('phone' in data && !isPhone(data.phone)) {
       throw createError('Teléfono inválido')
-    } else if ('role' in data && !roles.includes(data.role)) {
+    } else if ('role' in data && !roles.has(data.role)) {
       throw createError('Rol inválido')
     } else if ('province' in data && !isProvince(data.province)) {
       throw createError('Provincia inválida')

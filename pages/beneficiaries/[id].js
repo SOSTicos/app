@@ -289,8 +289,8 @@ export const getServerSideProps = async (ctx) => {
     const headers = getHeaders(ctx)
     const data = await api.get(`${host}/api/users/${id}`, {}, { headers })
     return { props: omitBy({ ...session, data }, isNil) }
-  } catch (_) {
-    console.log(_)
+  } catch (error) {
+    console.log(error)
     return { props: { ...session } }
   }
 }

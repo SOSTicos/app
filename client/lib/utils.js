@@ -48,7 +48,9 @@ export const getHost = (ctx) => {
 }
 
 export const secondsToTime = (s) => {
-  return [parseInt((s / 60) % 60, 10), parseInt(s % 60, 10)].join(':').replace(/\b(\d)\b/g, '0$1')
+  return [Number.parseInt((s / 60) % 60, 10), Number.parseInt(s % 60, 10)]
+    .join(':')
+    .replace(/\b(\d)\b/g, '0$1')
 }
 
 export const toId = (id) => (id ? `/${id}` : '')
