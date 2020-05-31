@@ -74,6 +74,11 @@
       "prettier/react",
       "plugin:react/recommended"
     ],
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
     "env": [
       "browser",
       "node",
