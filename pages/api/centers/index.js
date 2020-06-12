@@ -13,12 +13,12 @@ const create = ({ user, body }) => {
 }
 
 export default λ(
-  protect((req, res) => {
-    switch (req.method) {
+  protect((request, result) => {
+    switch (request.method) {
       case 'GET':
-        return fetch(req, res)
+        return fetch(request, result)
       case 'POST':
-        return create(req, res)
+        return create(request, result)
       default:
     }
 

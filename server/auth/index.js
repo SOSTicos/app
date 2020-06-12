@@ -121,11 +121,11 @@ module.exports = ({ db, secret, signInTokenTTL, accessTokenTTL }) => {
     return { user, token: accessToken }
   }
 
-  const protect = (fn) => async (req, res) => {
+  const protect = (fn) => async (request, result) => {
     const users = await db.get('users')
 
     try {
-      const token = getRequestToken(req)
+      const token = getRequestToken(request)
       const auth = await verifyToken(token, secret)
       const user = await users.findById(auth._id)
 
@@ -133,18 +133,18 @@ module.exports = ({ db, secret, signInTokenTTL, accessTokenTTL }) => {
         throw createError('No autorizado', 401)
       }
 
-      req.user = { ...auth, ...user }
+      request.user = { ...auth, ...user }
 
-      if (req.user) {
-        req.user._id = String(req.user._id)
-        req.acl = createACL(req.user)
+      if (request.user) {
+        request.user._id = String(request.user._id)
+        request.acl = createACL(request.user)
       }
     } catch (error) {
       console.log(error)
       throw createError('No autorizado', 401)
     }
 
-    return fn(req, res)
+    return fn(request, result)
   }
 
   setIndexes().catch(console.log)

@@ -9,6 +9,7 @@ import Menu from '@material-ui/core/Menu'
 import ListItemText from '@material-ui/core/ListItemText'
 import AppsIcon from '@material-ui/icons/Apps'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import Typography from '@material-ui/core/Typography'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
@@ -115,6 +116,13 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 <CropFreeIcon color="primary" className={styles.icon} />
                 <ListItemText primary={i18n`Registrar`} />
               </MenuItem>
+              <Divider />
+              {isAuth && (
+                <MenuItem onClick={() => navigate('/merchandise/reception')}>
+                  <ShoppingCartIcon color="primary" className={styles.icon} />
+                  <ListItemText primary={i18n`Recepción de mercadería`} />
+                </MenuItem>
+              )}
               <Divider />
               {isAuth && (
                 <MenuItem

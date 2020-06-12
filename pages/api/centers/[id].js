@@ -17,14 +17,14 @@ const destroy = ({ user, query }) => {
 }
 
 export default λ(
-  protect((req, res) => {
-    switch (req.method) {
+  protect((request, res) => {
+    switch (request.method) {
       case 'GET':
-        return fetch(req, res)
+        return fetch(request, res)
       case 'PATCH':
-        return update(req, res)
+        return update(request, res)
       case 'DELETE':
-        return destroy(req, res)
+        return destroy(request, res)
       default:
     }
 
