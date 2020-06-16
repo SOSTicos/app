@@ -8,19 +8,23 @@ import Button from '../../client/components/button'
 import Typography from '@material-ui/core/Typography'
 import Layout from '../../client/components/layout'
 import i18n from '../../shared/lib/i18n'
-import { DropzoneArea } from 'material-ui-dropzone'
 import Input from '../../client/components/input'
 import InputDate from '../../client/components/inputdate'
+import ImageSelector from '../../client/components/imageselector'
 import { useSnackbar } from 'notistack'
+
+// Constants for dealing with the size of images. These are in pixel units.
+// With these values, the image is about 155KB, and the thumbnail is about
+// 18KB in size.
+const IMG_TARGET_WIDTH = 1024
+const THUMBNAIL_TARGET_WIDTH = 256
 
 const MerchandiseReception = ({ user }) => {
   const [submitting, setSubmitting] = useState(false)
+  const [isPhotoSelected, setPhotoSelected] = useState(false)
   const api = useApi()
   const router = useRouter()
-  const [photo, setPhoto] = useState(null)
   const { enqueueSnackbar: notify } = useSnackbar()
-
-  const isPhotoSelected = photo !== null
 
   const todaysDate = new Date()
 
@@ -30,6 +34,8 @@ const MerchandiseReception = ({ user }) => {
     defaultValues: {
       arrivalDate: todaysDate.toISOString(),
       center: 'POLIDEPORTIVO SANTA CECILIA',
+      photo: '',
+      thumbnail: '',
     },
   })
 
@@ -37,31 +43,34 @@ const MerchandiseReception = ({ user }) => {
     if (!user) router.replace('/signin')
   }, [user])
 
-  function normalize(data) {
-    return {
-      ...data,
-      file: photo,
-    }
-  }
-
   function backToDashboard() {
     router.replace('/dashboard')
   }
 
   function resetForm() {
     setValue('arrivalDate', todaysDate.toISOString())
-    setPhoto(null)
+  }
+
+  function onImageSelection(imgSelection) {
+    if (imgSelection.img) {
+      setValue('photo', imgSelection.img)
+    }
+
+    if (imgSelection.thumbnail) {
+      setValue('thumbnail', imgSelection.thumbnail)
+    }
+
+    setPhotoSelected(imgSelection.img && imgSelection.thumbnail)
   }
 
   const onSubmit = async (data) => {
     try {
-      if (photo === null) {
+      if (!isPhotoSelected) {
         notify(i18n`No ha seleccionado la foto de la mercadería`, { variant: 'error' })
         return
       }
 
       setSubmitting(true)
-      data = normalize(data)
       await api.merchandise.create(data)
       notify(i18n`Mercadería registrada correctamente`, { variant: 'success' })
       resetForm()
@@ -71,47 +80,6 @@ const MerchandiseReception = ({ user }) => {
     } finally {
       setSubmitting(false)
     }
-  }
-
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.addEventListener('load', () => resolve(reader.result))
-      reader.addEventListener('error', (error) => reject(error))
-    })
-
-  const onPhotoSelected = (fileObjs) => {
-    const photoFile = fileObjs[0]
-    if (photoFile) {
-      toBase64(photoFile).then((result) => {
-        setPhoto(result)
-      })
-    }
-  }
-
-  const imageSelector = () => {
-    let imageCtrl
-    if (isPhotoSelected) {
-      imageCtrl = (
-        <>
-          <img width="100%" src={photo} />
-        </>
-      )
-    } else {
-      imageCtrl = (
-        <DropzoneArea
-          acceptedFiles={['image/*']}
-          dropzoneText="Selecciona la foto de la mercadería"
-          filesLimit={1}
-          showAlerts={false}
-          onChange={onPhotoSelected}
-          onDelete={(fileObject) => console.log('Removed File:', fileObject)}
-        />
-      )
-    }
-
-    return imageCtrl
   }
 
   return (
@@ -140,8 +108,13 @@ const MerchandiseReception = ({ user }) => {
           error={Boolean(errors.name)}
           errorText={errors.name && errors.name.message}
         />
-        {imageSelector()}
       </Fragment>
+      <ImageSelector
+        imgTargetWidth={IMG_TARGET_WIDTH}
+        thumbnailTargetWidth={THUMBNAIL_TARGET_WIDTH}
+        onSelection={onImageSelection}
+        useThumbnail={true}
+      />
       {isPhotoSelected && (
         <>
           <Button
