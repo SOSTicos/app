@@ -30,7 +30,6 @@ const λ = (fn) => async (request, response) => {
     response.statusCode = error.statusCode || 500
     response.json({ error: true, status: response.statusCode, message: error.message })
     console.error(error.message)
-    throw error
   }
 }
 
