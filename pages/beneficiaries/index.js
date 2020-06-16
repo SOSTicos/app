@@ -17,14 +17,7 @@ import createSearch from '../../client/lib/search'
 import { getHost } from '../../client/lib/utils'
 import * as api from '../../client/lib/api'
 
-const ROLES = {
-  admin: 'Administrador',
-  member: 'Miembro',
-  coordinator: 'Coordinador',
-  carrier: 'Transportista',
-}
-
-const SEARCH_KEYS = ['name', 'email', 'province', 'canton', 'district', 'role', 'docId']
+const SEARCH_KEYS = ['name', 'email', 'province', 'canton', 'district', 'docId', 'address', 'phone', 'centerId', 'necesities']
 
 const search = createSearch(SEARCH_KEYS, {
   threshold: 0.8,
@@ -48,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const BeneficiaryList = ({ user, users = [] }) => {
+const BeneficiaryList = ({ user, beneficiaries = [] }) => {
   const router = useRouter()
   const styles = useStyles()
   const [keyword, setKeyword] = useState()
@@ -61,10 +54,9 @@ const BeneficiaryList = ({ user, users = [] }) => {
     setKeyword(keyword)
   }
 
-  const data = keyword ? search(users, keyword) : users
+  const data = keyword ? search(beneficiaries, keyword) : beneficiaries
 
   const renderItem = (item) => {
-    const role = ROLES[item.role]
     const location =
       (item?.province || '') + ' ' + (item?.canton || '') + ' ' + (item?.district || '')
 
@@ -88,7 +80,6 @@ const BeneficiaryList = ({ user, users = [] }) => {
                     <Typography>{item.name}</Typography>
                     <Typography>{location.trim()}</Typography>
                   </Box>
-                  <Chip className={styles.chip} label={role} color="primary" size="small" />
                 </Box>
               </Fragment>
             }
@@ -134,14 +125,14 @@ export const getServerSideProps = async (ctx) => {
   const headers = getHeaders(ctx)
   const host = getHost(ctx)
 
-  let users = []
+  let beneficiaries = []
 
   try {
-    users = session.user ? await api.get(`${host}/api/users`, {}, { headers }) : []
+    beneficiaries = session.user ? await api.get(`${host}/api/beneficiaries`, {}, { headers }) : []
   } catch (_) {}
 
   // console.log('users', session, users)
-  return { props: { ...session, users } }
+  return { props: { ...session, beneficiaries } }
 }
 
 export default BeneficiaryList
