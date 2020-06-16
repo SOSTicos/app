@@ -16,7 +16,7 @@ const reducer = (state, data) => {
   return { ...state, ...data }
 }
 
-const useApi = (params = {}) => {
+const useApi = (parameters = {}) => {
   const timer = useRef(null)
   const context = useContext(Context)
   const [state, setState] = useReducer(reducer, initialState)
@@ -53,7 +53,7 @@ const useApi = (params = {}) => {
       const creds = await api.auth.signin(email)
       setState(creds)
       startVerification(creds)
-    } catch (error) {
+    } catch {
       cancel()
     }
 
@@ -70,10 +70,10 @@ const useApi = (params = {}) => {
   }
 
   useEffect(() => {
-    if ('user' in params) {
-      setState({ isAuth: Boolean(params.user), user: params.user })
+    if ('user' in parameters) {
+      setState({ isAuth: Boolean(parameters.user), user: parameters.user })
     }
-  }, [params])
+  }, [parameters])
 
   return useMemo(() => ({ ...context, ...state, signin, signout, cancel }), [state, context])
 }

@@ -19,6 +19,8 @@ const permissions = {
   },
   coordinator({ centerId }, { can }) {
     can('read', 'center')
+    can('read', 'merchandise')
+    can('create', 'merchandise')
     can('manage', 'all', { centerId })
   },
   admin(_, { can }) {

@@ -2,8 +2,8 @@ const cryptoRandomString = require('crypto-random-string')
 const { ObjectID } = require('mongodb')
 const trees = require('./trees')
 
-const generateString = (len = 24) => {
-  return cryptoRandomString({ length: len })
+const generateString = (length_ = 24) => {
+  return cryptoRandomString({ length: length_ })
 }
 
 const generateCode = () => {

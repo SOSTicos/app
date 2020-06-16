@@ -32,7 +32,7 @@ module.exports = (options) => {
 
     to = to || data.email
 
-    if ('string' !== typeof data.template) {
+    if (typeof data.template !== 'string') {
       throw createError('Invalid template.')
     }
 
@@ -61,7 +61,7 @@ module.exports = (options) => {
     const content = template({ ...data, host, site })
     const html = layout({ title, content, host, site, year })
 
-    return await client.sendMail({ html, from, to, subject, attachments })
+    return client.sendMail({ html, from, to, subject, attachments })
   }
 
   return { send }

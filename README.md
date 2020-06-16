@@ -28,3 +28,12 @@ You can check out [the Next.js GitHub repository](https://github.com/zeit/next.j
 The easiest way to deploy your Next.js app is to use the [ZEIT Now Platform](https://zeit.co/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Debugging
+
+To enable debugging, use either Node's *--inspect* or *--inspect-brk* arguments. The latter will pause until a debugger is attached. The default debug port is **9299**. Use *--port=<num>* to override. Examples
+```bash
+$ node --inspect-brk node_modules/next/dist/bin/next
+Debugger listening on ws://127.0.0.1:9229/211d9803-b648-4675-86e9-9fae190482f0
+```
+At this point, you may be able to attach a debugger at port 9299.

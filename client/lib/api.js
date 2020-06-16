@@ -1,6 +1,6 @@
 import request from './request'
 
-let token = undefined
+let token
 
 export const setToken = (accessToken) => {
   token = accessToken
