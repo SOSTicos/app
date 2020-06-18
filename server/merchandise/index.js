@@ -1,3 +1,4 @@
+const { v4: uuid } = require('uuid')
 const { createError } = require('../lib/utils')
 
 module.exports = ({ db }) => {
@@ -11,11 +12,12 @@ module.exports = ({ db }) => {
    * @private
    */
 
-  const normalize = (data, uploadedPhotoKey) => {
+  const normalize = (data, uploadedPhotoKey, uploadedThumbnailKey) => {
     return {
       arrivalDate: new Date(data.arrivalDate),
-      center: data.center,
+      centerId: data.centerId,
       photo: uploadedPhotoKey,
+      thumbnail: uploadedThumbnailKey,
       description: data.description,
       departureDate: data.departureDate,
       createdAt: Date.now(),
@@ -53,13 +55,17 @@ module.exports = ({ db }) => {
   const create = async ({ user, ...data }, api) => {
     user.can('create', 'merchandise')
 
-    const uploadedPhotoKey = await api.upload(data.file)
+    const photoName = `merchandise/photo_${uuid()}`
+    const thumbnailName = `${photoName}_thumbnail`
 
-    data = normalize(data, uploadedPhotoKey)
+    const uploadedPhotoKey = await api.upload(photoName, data.photo)
+    const uploadedThumbnailKey = await api.upload(thumbnailName, data.thumbnail)
+
+    data = normalize(data, uploadedPhotoKey, uploadedThumbnailKey)
     data.userId = user._id
 
-    const centers = await db.get('merchandise')
-    return centers.insertOne(data)
+    const merchandise = await db.get('merchandise')
+    return merchandise.insertOne(data)
   }
 
   return { fetch, create, fields }

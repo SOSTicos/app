@@ -8,6 +8,7 @@ const ImageSelector = ({
   thumbnailTargetHeight,
   useThumbnail,
   onSelection,
+  isImageSelected,
   showThumbnail,
 }) => {
   if (!imgTargetWidth && !imgTargetHeight) {
@@ -20,9 +21,12 @@ const ImageSelector = ({
     )
   }
 
-  const [selection, setSelection] = useState({ img: '', thumbnail: '' })
+  const emptySelection = {
+    img: '',
+    thumbnail: '',
+  }
 
-  const isPhotoSelected = selection.img.length > 0 && selection.thumbnail.length > 0
+  const [selection, setSelection] = useState(emptySelection)
 
   function resizeBase64(imgB64, targetWidth, targetHeight) {
     const img = document.createElement('img')
@@ -32,10 +36,10 @@ const ImageSelector = ({
 
     // Rescale image. If both width and height are specified, prioritize
     // for width.
-    if (targetWidth) {
+    if (targetWidth && targetWidth < img.width) {
       canvas.width = targetWidth
       canvas.height = img.height * (targetWidth / img.width)
-    } else if (targetHeight) {
+    } else if (targetHeight && targetHeight < img.height) {
       canvas.height = targetHeight
       canvas.width = img.width * (targetHeight / img.height)
     } else {
@@ -58,7 +62,7 @@ const ImageSelector = ({
       reader.addEventListener('error', (error) => reject(error))
     })
 
-  const onPhotoSelected = (fileObjs) => {
+  const onImageSelected = (fileObjs) => {
     const imgFile = fileObjs[0]
     if (imgFile) {
       toBase64(imgFile).then((originalImgB64) => {
@@ -81,7 +85,7 @@ const ImageSelector = ({
   }
 
   let imageCtrl
-  if (isPhotoSelected) {
+  if (isImageSelected) {
     if (showThumbnail) {
       imageCtrl = (
         <>
@@ -99,7 +103,7 @@ const ImageSelector = ({
         dropzoneText="Selecciona la foto de la mercadería"
         filesLimit={1}
         showAlerts={false}
-        onChange={onPhotoSelected}
+        onChange={onImageSelected}
         onDelete={(fileObject) => console.log('Removed File:', fileObject)}
       />
     )

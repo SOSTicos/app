@@ -19,7 +19,7 @@ import { useSnackbar } from 'notistack'
 const IMG_TARGET_WIDTH = 1024
 const THUMBNAIL_TARGET_WIDTH = 256
 
-const MerchandiseReception = ({ user }) => {
+const MerchandiseReception = ({ user, centers = [] }) => {
   const [submitting, setSubmitting] = useState(false)
   const [isPhotoSelected, setPhotoSelected] = useState(false)
   const api = useApi()
@@ -27,13 +27,13 @@ const MerchandiseReception = ({ user }) => {
   const { enqueueSnackbar: notify } = useSnackbar()
 
   const todaysDate = new Date()
+  const userCenter = centers.filter((center) => center._id === user.centerId)[0]
 
-  // TODO: Deal with collection center
-  const { setValue, control, handleSubmit, errors } = useForm({
+  const { setValue, control, handleSubmit, reset, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
       arrivalDate: todaysDate.toISOString(),
-      center: 'POLIDEPORTIVO SANTA CECILIA',
+      centerId: '',
       photo: '',
       thumbnail: '',
     },
@@ -41,14 +41,16 @@ const MerchandiseReception = ({ user }) => {
 
   useEffect(() => {
     if (!user) router.replace('/signin')
+    if (userCenter) {
+      setValue('centerId', userCenter._id)
+    } else {
+      notify(`El usuario ${user.email} no tiene centro de acopio asociado`, { variant: 'error' })
+      router.replace('/signin')
+    }
   }, [user])
 
   function backToDashboard() {
     router.replace('/dashboard')
-  }
-
-  function resetForm() {
-    setValue('arrivalDate', todaysDate.toISOString())
   }
 
   function onImageSelection(imgSelection) {
@@ -61,6 +63,11 @@ const MerchandiseReception = ({ user }) => {
     }
 
     setPhotoSelected(imgSelection.img && imgSelection.thumbnail)
+  }
+
+  function resetForm() {
+    reset()
+    setPhotoSelected(false)
   }
 
   const onSubmit = async (data) => {
@@ -87,14 +94,15 @@ const MerchandiseReception = ({ user }) => {
       <Typography variant="h1" gutterBottom>
         {i18n`Recepción de Mercadería`}
       </Typography>
+
       <Fragment>
         <Input
           name="center"
           label={i18n`Centro de acopio`}
-          control={control}
           inputProps={{
             readOnly: true,
           }}
+          value={userCenter ? userCenter.name : ''}
           error={Boolean(errors.name)}
           errorText={errors.name && errors.name.message}
         />
@@ -113,8 +121,32 @@ const MerchandiseReception = ({ user }) => {
         imgTargetWidth={IMG_TARGET_WIDTH}
         thumbnailTargetWidth={THUMBNAIL_TARGET_WIDTH}
         onSelection={onImageSelection}
+        isImageSelected={isPhotoSelected}
         useThumbnail={true}
       />
+      <div id="hiddenFields" style={{ display: 'none' }}>
+        <Input
+          name="centerId"
+          control={control}
+          inputProps={{
+            readOnly: true,
+          }}
+        />
+        <Input
+          name="photo"
+          control={control}
+          inputProps={{
+            readOnly: true,
+          }}
+        />
+        <Input
+          name="thumbnail"
+          control={control}
+          inputProps={{
+            readOnly: true,
+          }}
+        />
+      </div>
       {isPhotoSelected && (
         <>
           <Button

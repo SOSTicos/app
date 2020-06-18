@@ -1,7 +1,6 @@
 'use strict'
 
 const AWS = require('aws-sdk')
-const { v4: uuid } = require('uuid')
 const { createError } = require('../utils')
 
 module.exports = (options) => {
@@ -15,10 +14,14 @@ module.exports = (options) => {
     secretAccessKey: secretKey,
   })
 
-  async function upload(data) {
+  async function upload(key, data) {
+    if (!key || !data) {
+      throw new Error('Missing key and data to upload to S3')
+    }
+
     let uploadParameters
     try {
-      uploadParameters = b64ToAWS(data)
+      uploadParameters = b64ToAWS(key, data)
 
       await new Promise((resolve, reject) => {
         s3.upload(uploadParameters, function (err, data) {
@@ -38,7 +41,7 @@ module.exports = (options) => {
     return uploadParameters.Key
   }
 
-  function b64ToAWS(b64) {
+  function b64ToAWS(key, b64) {
     try {
       const dataPrefix = 'data:'
       let [contentType, imgB64] = b64.split(';base64,')
@@ -49,11 +52,12 @@ module.exports = (options) => {
 
       const imgBlob = Buffer.from(imgB64, 'base64')
 
+      // TODO: Specify final bucket name
       return {
         Bucket: 'rodyce.sos.ticos',
         Body: imgBlob,
         ContentType: contentType,
-        Key: `merchandise/${uuid()}`,
+        Key: key,
       }
     } catch (error) {
       console.error(error)
