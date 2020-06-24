@@ -1,5 +1,6 @@
 const config = require('./config')
 const user = require('./user')
+const beneficiary = require('./beneficiaries')
 const auth = require('./auth')
 const center = require('./center')
 const merchandise = require('./merchandise')
@@ -28,5 +29,6 @@ module.exports = (options = {}) => {
     users: user(options),
     centers: center(options),
     merchandise: merchandise(options),
+    beneficiaries: beneficiary(options)
   }
 }

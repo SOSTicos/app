@@ -23,6 +23,7 @@ import * as api from '../../client/lib/api'
 import i18n from '../../shared/lib/i18n'
 import { isPhone, toPhone } from '../../shared/lib/utils'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
+import { estados } from '../../shared/lib/statuses'
 
 const useStyles = makeStyles((theme) => ({
   inline: {
@@ -56,7 +57,6 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
   const { setValue, watch, control, handleSubmit, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
-      role: data?.role || '',
       name: data?.name || '',
       docId: data?.docId || '',
       email: data?.email || '',
@@ -65,6 +65,8 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
       canton: data?.canton || '',
       district: data?.district || '',
       address: data?.address || '',
+      necesities: data?.necesities,
+      status: data.status,
       center: data?.centerId ? find(centers, { _id: data?.centerId }) : { _id: '', name: '' },
     },
   })
@@ -98,25 +100,29 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
   }, [districts, district])
 
   const normalize = (data) => {
-    return {
-      name: data.name,
-      role: data.role,
-      docId: data.docId,
-      phone: toPhone(data.phone),
-      province: data.province,
-      canton: data.canton,
-      district: data.district,
-      address: data.address,
-      email: data.email.toLowerCase(),
-      centerId: data?.center?._id,
-    }
+    return omitBy(
+      {
+        name: data.name,
+        docId: data.docId,
+        centerId: data?.center?._id,
+        phone: toPhone(data.phone),
+        email: data.email.toLowerCase(),
+        province: data.province,
+        canton: data.canton,
+        district: data.district,
+        address: data.address,
+        necesities: data.necesities,
+        status: data.status
+      },
+      isNil
+    );
   }
 
   const onSubmit = async (data) => {
     try {
       setSubmitting(true)
       data = normalize(data)
-      await api.users.update({ ...data, id: userId })
+      await api.beneficiaries.update({ ...data, id: userId })
       notify(i18n`Beneficiario actualizado`, { variant: 'success' })
     } catch (error) {
       console.log(error)
@@ -250,6 +256,30 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
             rules={{ required: i18n`Requerido` }}
           />
 
+          <Input
+            type="text"
+            name="necesities"
+            control={control}
+            label={i18n`Necesidades`}
+            error={Boolean(errors.address)}
+            errorText={errors.address && errors.address.message}
+          />
+
+          <Select
+            name="status"
+            control={control}
+            label={i18n`Estado`}
+            rules={{ required: i18n`Requerido` }}
+            error={Boolean(errors.status)}
+            errorText={errors.status && errors.status.message}
+          >
+            {estados.map((value, key) => (
+              <option key={key} value={key}>
+                {value}
+              </option>
+            ))}
+          </Select>
+
           <Button
             style={{ marginBottom: 0 }}
             type="submit"
@@ -272,6 +302,8 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
           <Line label={i18n`Distrito`} value={distritos[data.district]} />
           <Line label={i18n`Otras señas`} value={data.address} />
           <Line label={i18n`Centro de acopio`} value={center.name} />
+          <Line label={i18n`Necesidades`} value={data.necesities} />
+          <Line label={i18n`Estado`} value={estados[data.status]} />
         </Paper>
       )}
       <br />
@@ -287,7 +319,7 @@ export const getServerSideProps = async (ctx) => {
   try {
     const host = getHost(ctx)
     const headers = getHeaders(ctx)
-    const data = await api.get(`${host}/api/users/${id}`, {}, { headers })
+    const data = await api.get(`${host}/api/beneficiaries/${id}`, {}, { headers })
     return { props: omitBy({ ...session, data }, isNil) }
   } catch (error) {
     console.log(error)

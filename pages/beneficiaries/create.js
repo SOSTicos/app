@@ -16,6 +16,7 @@ import useApi from '../../client/hooks/api'
 import { isPhone, toPhone } from '../../shared/lib/utils'
 import i18n from '../../shared/lib/i18n'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
+import { estados } from '../../shared/lib/statuses'
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -37,7 +38,6 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
   const { watch, control, handleSubmit, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
-      role: 'member',
       name: '',
       docId: '',
       email: '',
@@ -47,6 +47,8 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
       canton: '',
       district: '',
       address: '',
+      necesities: '',
+      status: ''
     },
   })
 
@@ -67,7 +69,12 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
         centerId: data?.center?._id,
         phone: toPhone(data.phone),
         email: data.email.toLowerCase(),
-        role: 'beneficiary',
+        province: data.province,
+        canton: data.canton,
+        district: data.district,
+        address: data.address,
+        necesities: data.necesities,
+        status: data.status
       },
       isNil
     )
@@ -77,7 +84,7 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
     try {
       setSubmitting(true)
       data = normalize(data)
-      await api.users.create(data)
+      await api.beneficiaries.create(data)
       notify(i18n`Beneficiario creado`, { variant: 'success' })
     } catch (error) {
       console.log(error)
@@ -196,6 +203,29 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
         options={centers}
         error={Boolean(errors.center)}
         errorText={errors.center && errors.center.message}
+      />
+
+      <Select
+        name="status"
+        control={control}
+        label={i18n`Estado`}
+        error={Boolean(errors.status)}
+        errorText={errors.status && errors.status.message}
+      >
+        {estados.map((value, key) => (
+          <option key={key} value={key}>
+            {value}
+          </option>
+        ))}
+      </Select>
+
+      <Input
+        type="text"
+        name="necesities"
+        control={control}
+        label={i18n`Necesidades`}
+        error={Boolean(errors.address)}
+        errorText={errors.address && errors.address.message}
       />
 
       <Button
