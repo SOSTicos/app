@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import InputLabel from '@material-ui/core/InputLabel'
 import FormGroup from '@material-ui/core/FormGroup'
@@ -20,18 +21,18 @@ const Select = ({
   className,
   label,
   name,
-  error,
   errorText,
+  error,
   children,
   ...props
 }) => {
   const styles = useStyles()
   return (
-    <FormGroup className={className} style={style}>
+    <FormGroup className={clsx(styles.container, className)} style={style}>
       <InputLabel error={error} htmlFor={name}>
         {label}
       </InputLabel>
-      <FormControl variant="outlined" className={styles.input} error={error}>
+      <FormControl fullWidth variant="outlined" className={styles.input} error={error}>
         {control ? (
           <Controller
             native
@@ -43,6 +44,7 @@ const Select = ({
             control={control}
             {...props}
           >
+            {!props.multiple && <option aria-label="None" value="" />}
             {children}
           </Controller>
         ) : (
@@ -55,6 +57,7 @@ const Select = ({
             control={control}
             {...props}
           >
+            {!props.multiple && <option aria-label="None" value="" />}
             {children}
           </BaseSelect>
         )}

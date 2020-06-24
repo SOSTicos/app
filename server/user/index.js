@@ -119,11 +119,10 @@ module.exports = ({ db, superadmin, seed }) => {
    * @public
    */
 
-  const update = async ({ user, id, role, ...data }) => {
+  const update = async ({ user, id, ...data }) => {
     user.can('update', 'user', { _id: id })
 
     const users = await db.get('users')
-
     data = pick(data, fields)
 
     if ('name' in data && (!data.name || !isString(data.name))) {

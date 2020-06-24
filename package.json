@@ -108,7 +108,11 @@
       "no-useless-escape": 0,
       "default-param-last": 0,
       "unicorn/prefer-string-slice": 0,
-      "require-atomic-updates": 0
+      "unicorn/prevent-abbreviations": 0,
+      "unicorn/no-fn-reference-in-iterator": 0,
+      "no-negated-condition": 0,
+      "require-atomic-updates": 0,
+      "no-warning-comments": 0
     },
     "ignores": [
       "dist",

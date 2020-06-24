@@ -34,7 +34,7 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
   const api = useApi()
   const { enqueueSnackbar: notify } = useSnackbar()
 
-  const { setValue, watch, control, handleSubmit, errors } = useForm({
+  const { watch, control, handleSubmit, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
       role: 'member',
@@ -54,7 +54,7 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
     if (!user) router.replace('/signin')
   }, [user])
 
-  const { province, canton, district } = watch()
+  const { province, canton } = watch()
   const provinces = Object.keys(all)
   const cantons = province ? Object.keys(all[province] || {}) : []
   const districts = cantons.length > 0 ? Object.keys(all[province][canton] || {}) : []
@@ -63,7 +63,6 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
     return omitBy(
       {
         name: data.name,
-        role: data.role,
         docId: data.docId,
         centerId: data?.center?._id,
         phone: toPhone(data.phone),

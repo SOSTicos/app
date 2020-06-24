@@ -2,7 +2,6 @@ import { useEffect, Fragment, useState } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
-// import useMediaQuery from '@material-ui/core/useMediaQuery'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List'
@@ -21,12 +20,11 @@ import * as api from '../../client/lib/api'
 const ROLES = {
   admin: 'Administrador',
   member: 'Miembro',
-  superadmin: 'Super Administrador',
   coordinator: 'Coordinador',
   carrier: 'Transportista',
 }
 
-const SEARCH_KEYS = ['name', 'email', 'phone', 'province', 'canton', 'district', 'role', 'docId']
+const SEARCH_KEYS = ['name', 'email', 'province', 'canton', 'district', 'role', 'docId']
 
 const search = createSearch(SEARCH_KEYS, {
   threshold: 0.8,
@@ -54,8 +52,6 @@ const VolunteerList = ({ user, users = [] }) => {
   const router = useRouter()
   const styles = useStyles()
   const [keyword, setKeyword] = useState()
-  // const [type, setType] = useState('')
-  // const matches = useMediaQuery('(min-width:400px)')
 
   useEffect(() => {
     if (!user) router.replace('/signin')
@@ -69,8 +65,8 @@ const VolunteerList = ({ user, users = [] }) => {
 
   const renderItem = (item) => {
     const role = ROLES[item.role]
-    // const location =
-    //   (item?.province || '') + ' ' + (item?.canton || '') + ' ' + (item?.district || '')
+    const location =
+      (item?.province || '') + ' ' + (item?.canton || '') + ' ' + (item?.district || '')
 
     console.log(item)
 
@@ -90,9 +86,7 @@ const VolunteerList = ({ user, users = [] }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="flex-end">
                   <Box display="flex" flexDirection="column" justifyContent="space-between">
                     <Typography>{item.name}</Typography>
-                    {
-                      // <Typography>{location.trim()}</Typography>
-                    }
+                    <Typography>{location.trim()}</Typography>
                   </Box>
                   <Chip className={styles.chip} label={role} color="primary" size="small" />
                 </Box>

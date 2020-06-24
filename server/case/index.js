@@ -1,6 +1,6 @@
 const isEmail = require('is-email')
 const { pick, isString, isUndefined } = require('lodash')
-const { createError, toPhone } = require('../lib/utils')
+const { createError } = require('../lib/utils')
 const { isPhone, toPhone } = require('../../shared/lib/utils')
 const { isProvince, isDistrict, isCanton } = require('../../shared/lib/locations')
 

@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 import { isEmpty, isNil, omitBy } from 'lodash'
-import isEmail from 'is-email'
+// import isEmail from 'is-email'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
@@ -21,7 +21,7 @@ import { getHost } from '../../client/lib/utils'
 import useApi from '../../client/hooks/api'
 import * as api from '../../client/lib/api'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
-import { isPhone, toPhone } from '../../shared/lib/utils'
+// import { isPhone, toPhone } from '../../shared/lib/utils'
 import i18n from '../../shared/lib/i18n'
 
 const useStyles = makeStyles((theme) => ({
@@ -53,12 +53,12 @@ const CenterDetail = ({ user, data }) => {
   const userId = data._id
   const { enqueueSnackbar: notify } = useSnackbar()
 
-  const { watch, control, handleSubmit, errors } = useForm({
+  const { watch, control, setValue, handleSubmit, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
       name: data?.name || '',
-      email: data?.email || '',
-      province: data?.province || '',
+      // email: data?.email || '',
+      // province: data?.province || '',
       canton: data?.canton || '',
       district: data?.district || '',
       address: data?.address || '',
@@ -97,8 +97,8 @@ const CenterDetail = ({ user, data }) => {
     return {
       ...data,
       name: data.name,
-      email: data.email.toLowerCase(),
-      phone: toPhone(data.phone),
+      // email: data.email.toLowerCase(),
+      // phone: toPhone(data.phone),
     }
   }
 
@@ -152,31 +152,32 @@ const CenterDetail = ({ user, data }) => {
             control={control}
           />
 
-          <Input
-            label={i18n`Email`}
-            error={Boolean(errors.email)}
-            errorText={errors.email && errors.email.message}
-            type="text"
-            name="email"
-            rules={{
-              required: i18n`Requerido`,
-              validate: (value) => isEmail(value) || i18n`Email inválido`,
-            }}
-            control={control}
-          />
-
-          <Input
-            label={i18n`Teléfono`}
-            error={Boolean(errors.phone)}
-            errorText={errors.phone && errors.phone.message}
-            type="number"
-            name="phone"
-            rules={{
-              required: i18n`Requerido`,
-              validate: (value) => isPhone(value, 'CR', true) || i18n`Teléfono inválido`,
-            }}
-            control={control}
-          />
+          {
+            // <Input
+            //   label={i18n`Email`}
+            //   error={Boolean(errors.email)}
+            //   errorText={errors.email && errors.email.message}
+            //   type="text"
+            //   name="email"
+            //   rules={{
+            //     required: i18n`Requerido`,
+            //     validate: (value) => isEmail(value) || i18n`Email inválido`,
+            //   }}
+            //   control={control}
+            // />
+            // <Input
+            //   label={i18n`Teléfono`}
+            //   error={Boolean(errors.phone)}
+            //   errorText={errors.phone && errors.phone.message}
+            //   type="number"
+            //   name="phone"
+            //   rules={{
+            //     required: i18n`Requerido`,
+            //     validate: (value) => isPhone(value, 'CR', true) || i18n`Teléfono inválido`,
+            //   }}
+            //   control={control}
+            // />
+          }
 
           <Select
             name="province"
@@ -247,8 +248,10 @@ const CenterDetail = ({ user, data }) => {
         </Fragment>
       ) : (
         <Paper className={styles.paper}>
-          <Line label={i18n`Nombre`} value={data.name} />
-          <Line label={i18n`Email`} value={data.email} />
+          {
+            // <Line label={i18n`Nombre`} value={data.name} />
+            // <Line label={i18n`Email`} value={data.email} />
+          }
           <Line label={i18n`Teléfono`} value={data.phone} />
           <Line label={i18n`Provincia`} value={provincias[data.province]} />
           <Line label={i18n`Cantón`} value={cantones[data.canton]} />

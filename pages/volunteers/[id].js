@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
+import FormGroup from '@material-ui/core/FormGroup'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import EditIcon from '@material-ui/icons/Edit'
@@ -20,8 +21,24 @@ import { getHost } from '../../client/lib/utils'
 import useApi from '../../client/hooks/api'
 import * as api from '../../client/lib/api'
 import i18n from '../../shared/lib/i18n'
+import { toPhone } from '../../shared/lib/utils'
+import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
+
+const roles = [
+  { value: 'admin', label: i18n`Administrador` },
+  { value: 'coordinator', label: i18n`Coordinador` },
+  { value: 'carrier', label: i18n`Transportista` },
+  { value: 'member', label: i18n`Miembro` },
+]
 
 const useStyles = makeStyles((theme) => ({
+  inline: {
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+  },
+  inlineControl: {
+    width: '48%',
+  },
   button: {
     marginTop: theme.spacing(0),
     marginBottom: theme.spacing(0),
@@ -39,9 +56,10 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
   const styles = useStyles()
   const api = useApi()
   const userId = data._id
+
   const { enqueueSnackbar: notify } = useSnackbar()
 
-  const { watch, control, handleSubmit, errors } = useForm({
+  const { watch, setValue, control, handleSubmit, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
       role: data?.role || '',
@@ -49,21 +67,54 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
       docId: data?.docId || '',
       email: data?.email || '',
       phone: (data?.phone || '').replace('+506', ''),
+      province: data?.province || '',
+      canton: data?.canton || '',
+      district: data?.district || '',
+      address: data?.address || '',
       center: data?.centerId ? find(centers, { _id: data?.centerId }) : {},
     },
   })
 
+  console.log('ALL', all)
+
   const center = data?.centerId ? find(centers, { _id: data?.centerId }) : {}
+  const { province, canton, district } = watch()
+  const provinces = Object.keys(all)
+  const cantons = province ? Object.keys(all[province] || {}) : []
+  const districts = cantons.length > 0 ? Object.keys(all[province][canton] || {}) : []
 
   useEffect(() => {
     if (!user) router.replace('/signin')
   }, [user])
+
+  // useEffect(() => {
+  //   if (province && !provinces.includes(province)) {
+  //     setValue('province', '')
+  //   }
+  // }, [provinces, province])
+
+  useEffect(() => {
+    if (canton && !cantons.includes(canton)) {
+      setValue('canton', '')
+    }
+  }, [cantons, canton])
+
+  useEffect(() => {
+    if (district && !districts.includes(district)) {
+      setValue('district', '')
+    }
+  }, [districts, district])
 
   const normalize = (data) => {
     return {
       name: data.name,
       role: data.role,
       docId: data.docId,
+      phone: data.phone ? toPhone(data.phone) : undefined,
+      province: data.province,
+      canton: data.canton,
+      district: data.district,
+      address: data.address,
       centerId: data?.center?._id,
     }
   }
@@ -86,6 +137,8 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
   const onToggleEdit = () => {
     setEditting((editting) => !editting)
   }
+
+  const role = roles.find((role) => data.role === role.value)
 
   return (
     <Layout user={user} backLabel="Volver" onBack={() => router.back()} my={0} mx={2}>
@@ -115,6 +168,7 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
           <Input
             name="name"
             label={i18n`Nombre`}
+            rules={{ required: i18n`Requerido` }}
             control={control}
             error={Boolean(errors.name)}
             errorText={errors.name && errors.name.message}
@@ -128,6 +182,72 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
             errorText={errors.docId && errors.docId.message}
           />
 
+          <Input
+            name="phone"
+            control={control}
+            label={i18n`Teléfono`}
+            error={Boolean(errors.phone)}
+            errorText={errors.phone && errors.phone.message}
+          />
+
+          <Select
+            name="province"
+            control={control}
+            label={i18n`Provincia`}
+            rules={{ required: i18n`Requerido` }}
+            error={Boolean(errors.province)}
+            errorText={errors.province && errors.province.message}
+          >
+            {provinces.map((code) => (
+              <option key={code} value={code}>
+                {provincias[code]}
+              </option>
+            ))}
+          </Select>
+
+          <FormGroup row className={styles.inline}>
+            <Select
+              name="canton"
+              control={control}
+              label={i18n`Cantón`}
+              rules={{ required: i18n`Requerido` }}
+              className={styles.inlineControl}
+              error={Boolean(errors.canton)}
+              errorText={errors.canton && errors.canton.message}
+            >
+              {cantons.map((code) => (
+                <option key={code} value={code}>
+                  {cantones[code]}
+                </option>
+              ))}
+            </Select>
+            <Select
+              name="district"
+              control={control}
+              label={i18n`Distrito`}
+              rules={{ required: i18n`Requerido` }}
+              className={styles.inlineControl}
+              error={Boolean(errors.district)}
+              errorText={errors.district && errors.district.message}
+            >
+              {districts.map((code) => (
+                <option key={code} value={code}>
+                  {distritos[code]}
+                </option>
+              ))}
+            </Select>
+          </FormGroup>
+
+          <Input
+            type="text"
+            name="address"
+            control={control}
+            label={i18n`Otras señas`}
+            rules={{ required: i18n`Requerido` }}
+            error={Boolean(errors.address)}
+            errorText={errors.address && errors.address.message}
+          />
+
           <Select
             name="role"
             control={control}
@@ -136,10 +256,11 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
             error={Boolean(errors.role)}
             errorText={errors.role && errors.role.message}
           >
-            <option value="admin">{i18n`Administrador`}</option>
-            <option value="coordinator">{i18n`Coordinador`}</option>
-            <option value="carrier">{i18n`Transportista`}</option>
-            <option value="member">{i18n`Miembro`}</option>
+            {roles.map((role) => (
+              <option key={role.value} value={role.value}>
+                {role.label}
+              </option>
+            ))}
           </Select>
 
           <Autocomplete
@@ -162,15 +283,20 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
           >
             {i18n`Guardar`}
           </Button>
+          <br />
         </Fragment>
       ) : (
         <Paper className={styles.paper}>
           <Line label={i18n`Email`} value={data.email} />
-          <Line label={i18n`Nombre`} value={data.name} />
-          <Line label={i18n`Cédula`} value={data.docId} />
-          <Line label={i18n`Teléfono`} value={data.phone} />
-          <Line label={i18n`Rol`} value={data.role} />
-          <Line label={i18n`Centro de acopio`} value={center.name} />
+          {data.name && <Line label={i18n`Nombre`} value={data.name} />}
+          {data.docId && <Line label={i18n`Cédula`} value={data.docId} />}
+          {data.phone && <Line label={i18n`Teléfono`} value={data.phone} />}
+          {data.province && <Line label={i18n`Provincia`} value={provincias[data.province]} />}
+          {data.canton && <Line label={i18n`Cantón`} value={cantones[data.canton]} />}
+          {data.district && <Line label={i18n`Distrito`} value={distritos[data.district]} />}
+          {data.address && <Line label={i18n`Otras señas`} value={data.address} />}
+          {center && center._id && <Line label={i18n`Centro de acopio`} value={center.name} />}
+          {data.role && <Line label={i18n`Rol`} value={role.value} />}
         </Paper>
       )}
     </Layout>

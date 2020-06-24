@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import isEmail from 'is-email'
+// import isEmail from 'is-email'
 import { isEmpty } from 'lodash'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
@@ -13,7 +13,7 @@ import Layout from '../../client/components/layout'
 import Button from '../../client/components/button'
 import { getSession } from '../../client/lib/auth'
 import useApi from '../../client/hooks/api'
-import { isPhone, toPhone } from '../../shared/lib/utils'
+// import { isPhone, toPhone } from '../../shared/lib/utils'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
 import i18n from '../../shared/lib/i18n'
 
@@ -33,8 +33,8 @@ const useStyles = makeStyles(() => ({
 const defaultValues = {
   userId: '',
   name: '',
-  phone: '',
-  email: '',
+  // phone: '',
+  // email: '',
   province: '',
   canton: '',
   district: '',
@@ -43,7 +43,7 @@ const defaultValues = {
 
 const CenterCreate = ({ user }) => {
   const [submitting, setSubmitting] = useState(false)
-  const [data, setData] = useState({})
+  // const [data, setData] = useState({})
   const router = useRouter()
   const api = useApi()
   const styles = useStyles()
@@ -66,8 +66,8 @@ const CenterCreate = ({ user }) => {
   const normalize = (data) => {
     return {
       ...data,
-      email: data.email.toLowerCase(),
-      phone: toPhone(data.phone),
+      // email: data.email.toLowerCase(),
+      // phone: toPhone(data.phone),
     }
   }
 
@@ -123,31 +123,35 @@ const CenterCreate = ({ user }) => {
         control={control}
       />
 
-      <Input
-        label={i18n`Email`}
-        error={Boolean(errors.email)}
-        errorText={errors.email && errors.email.message}
-        type="text"
-        name="email"
-        rules={{
-          required: i18n`Requerido`,
-          validate: (value) => isEmail(value) || i18n`Email inválido`,
-        }}
-        control={control}
-      />
+      {
+        //   <Input
+        //   label={i18n`Email`}
+        //   error={Boolean(errors.email)}
+        //   errorText={errors.email && errors.email.message}
+        //   type="text"
+        //   name="email"
+        //   rules={{
+        //     required: i18n`Requerido`,
+        //     validate: (value) => isEmail(value) || i18n`Email inválido`,
+        //   }}
+        //   control={control}
+        // />
+      }
 
-      <Input
-        label={i18n`Teléfono`}
-        error={Boolean(errors.phone)}
-        errorText={errors.phone && errors.phone.message}
-        type="number"
-        name="phone"
-        rules={{
-          required: i18n`Requerido`,
-          validate: (value) => isPhone(value, 'CR', true) || i18n`Teléfono inválido`,
-        }}
-        control={control}
-      />
+      {
+        //   <Input
+        //   label={i18n`Teléfono`}
+        //   error={Boolean(errors.phone)}
+        //   errorText={errors.phone && errors.phone.message}
+        //   type="number"
+        //   name="phone"
+        //   rules={{
+        //     required: i18n`Requerido`,
+        //     validate: (value) => isPhone(value, 'CR', true) || i18n`Teléfono inválido`,
+        //   }}
+        //   control={control}
+        // />
+      }
 
       <Select
         name="province"

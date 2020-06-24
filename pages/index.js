@@ -1,16 +1,8 @@
 import Typography from '@material-ui/core/Typography'
-import { useTheme, makeStyles } from '@material-ui/core/styles'
-import { useRouter } from 'next/router'
 import Layout from '../client/components/layout'
 import { getSession } from '../client/lib/auth'
 
-const useStyles = makeStyles((theme) => ({}))
-
 const Home = ({ user }) => {
-  const theme = useTheme()
-  const router = useRouter()
-  const styles = useStyles()
-
   return (
     <Layout user={user} my={6}>
       <Typography component="div" align="center" gutterBottom>

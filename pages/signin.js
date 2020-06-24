@@ -10,7 +10,7 @@ import Button from '../client/components/button'
 import useApi from '../client/hooks/api'
 import { getSession } from '../client/lib/auth'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   inline: {
     justifyContent: 'space-between',
   },
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const Signin = ({}) => {
+const Signin = () => {
   const { enqueueSnackbar: notify } = useSnackbar()
   const { isAuth, code, verifying, expired, signin, cancel, ...state } = useApi()
   const [email, setEmail] = useState('')
@@ -38,7 +38,7 @@ const Signin = ({}) => {
     try {
       await signin(email)
     } catch (error) {
-      console.log('error')
+      console.log('error', error)
       notify('Correo inválido', { variant: 'error' })
     }
   }

@@ -1,16 +1,11 @@
-import { Fragment, useEffect } from 'react'
+import { useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
-import { useTheme, makeStyles } from '@material-ui/core/styles'
 import { useRouter } from 'next/router'
 import Layout from '../client/components/layout'
 import { getSession } from '../client/lib/auth'
 
-const useStyles = makeStyles((theme) => ({}))
-
 const Dashboard = ({ user }) => {
-  const theme = useTheme()
   const router = useRouter()
-  const styles = useStyles()
 
   useEffect(() => {
     if (!user) router.replace('/signin')

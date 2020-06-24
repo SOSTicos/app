@@ -1,7 +1,7 @@
 const isEmail = require('is-email')
 const { pick, isString, isUndefined } = require('lodash')
 const { createError } = require('../lib/utils')
-const { isPhone, toPhone } = require('../../shared/lib/utils')
+const { isPhone } = require('../../shared/lib/utils')
 const { isProvince, isDistrict, isCanton } = require('../../shared/lib/locations')
 
 module.exports = ({ db }) => {
@@ -32,8 +32,8 @@ module.exports = ({ db }) => {
   const normalize = (data) => {
     return {
       name: data.name,
-      phone: toPhone(data.phone),
-      email: data.email.toLowerCase(),
+      // phone: toPhone(data.phone),
+      // email: data.email.toLowerCase(),
       province: data.province,
       canton: data.canton,
       district: data.district,
@@ -83,9 +83,9 @@ module.exports = ({ db }) => {
     } else if (!data.district || !isDistrict(data.district)) {
       throw createError('Distrito inválido')
     } else if (!isPhone(data.phone)) {
-      throw createError('Teléfono inválido')
+      // throw createError('Teléfono inválido')
     } else if (!isEmail(data.email)) {
-      throw createError('Email inválido')
+      // throw createError('Email inválido')
     }
 
     data = normalize(data)
@@ -117,20 +117,20 @@ module.exports = ({ db }) => {
     } else if ('district' in data && !isDistrict(data.district)) {
       throw createError('Distrito inválido')
     } else if ('phone' in data && !isPhone(data.phone)) {
-      throw createError('Teléfono inválido')
+      // throw createError('Teléfono inválido')
     } else if ('email' in data && !isEmail(data.email)) {
-      throw createError('Email inválido')
+      // throw createError('Email inválido')
     } else if (!isUndefined(userId) && !(await isUser(userId))) {
       throw createError(`Usuario ${userId} inválido`)
     }
 
-    if (data.email) {
-      data.email = data.email.toLowerCase()
-    }
+    // if (data.email) {
+    //   data.email = data.email.toLowerCase()
+    // }
 
-    if (data.phone) {
-      data.phone = toPhone(data.phone)
-    }
+    // if (data.phone) {
+    //   data.phone = toPhone(data.phone)
+    // }
 
     if (userId) {
       data.userId = userId

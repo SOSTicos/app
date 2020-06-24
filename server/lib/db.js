@@ -115,8 +115,8 @@ const collection = (col, opt) => {
   }
 
   const findMany = (query = {}, { sort = '_id', limit = 1000, page = 0, ...options } = {}) => {
-    limit = parseInt(limit, 10)
-    page = parseInt(page, 10)
+    limit = Number.parseInt(limit, 10)
+    page = Number.parseInt(page, 10)
     sort = parseSort(sort)
 
     const skip = page > 0 ? (page - 1) * limit : 0

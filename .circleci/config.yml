@@ -1,0 +1,78 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/sosticos
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/sosticos
+      - restore-cache:
+          keys:
+            - yarn-cache-{{ .Branch }}
+            - yarn-cache-
+      - run:
+          name: Install node packages
+          command: yarn install --ignore-engines
+      - save_cache:
+          key: yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - ~/.yarn-cache
+  test:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/sosticos
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/sosticos
+      - restore_cache:
+          keys:
+            - yarn-cache-{{ .Branch }}
+            - yarn-cache-
+      - run:
+          name: Install dependencies
+          command: yarn
+      - run:
+          name: Run tests
+          command: yarn test
+  deploy:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/sosticos
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/sosticos
+      - restore_cache:
+          keys:
+            - yarn-cache-{{ .Branch }}
+            - yarn-cache-
+      - run:
+          name: Install Vercel Now
+          command: sudo yarn global add vercel
+      - run:
+          name: Install dependencies
+          command: yarn
+      - deploy:
+          name: Deploy to Vercel
+          command: bash scripts/deploy.sh
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master
+                - production

@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "scope": "sosticos",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

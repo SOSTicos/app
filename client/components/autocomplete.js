@@ -37,17 +37,17 @@ const Autocomplete = ({ className, name, label, error, errorText, ...props }) =>
         <Controller
           as={BaseAutocomplete}
           name={name}
-          onChange={([e, value]) => value}
+          onChange={([_, value]) => value}
           getOptionLabel={(option) => option.name}
           getOptionSelected={(option, value) => option._id === value._id}
           popupIcon={<KeyboardArrowDownIcon style={{ color: '#222' }} />}
-          renderInput={(params) => (
+          renderInput={(parameters) => (
             <TextField
               required
               className={styles.root}
-              {...params}
+              {...parameters}
               inputProps={{
-                ...params.inputProps,
+                ...parameters.inputProps,
               }}
               variant="outlined"
               error={error}
