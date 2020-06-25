@@ -25,8 +25,6 @@ export default async ({ path, method = 'GET', token, body, query, headers = {} }
     url += (url.includes('?') ? '&' : '?') + qs.format(query)
   }
 
-  console.log('URL', url, method, body, token)
-
   try {
     const response = await fetch(url, {
       body,

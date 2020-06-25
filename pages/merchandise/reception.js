@@ -8,60 +8,76 @@ import Button from '../../client/components/button'
 import Typography from '@material-ui/core/Typography'
 import Layout from '../../client/components/layout'
 import i18n from '../../shared/lib/i18n'
-import { DropzoneArea } from 'material-ui-dropzone'
 import Input from '../../client/components/input'
 import InputDate from '../../client/components/inputdate'
+import ImageSelector from '../../client/components/imageselector'
 import { useSnackbar } from 'notistack'
 
-const MerchandiseReception = ({ user }) => {
+// Constants for dealing with the size of images. These are in pixel units.
+// With these values, the image is about 155KB, and the thumbnail is about
+// 18KB in size.
+const IMG_TARGET_WIDTH = 1024
+const THUMBNAIL_TARGET_WIDTH = 256
+
+const MerchandiseReception = ({ user, centers = [] }) => {
   const [submitting, setSubmitting] = useState(false)
+  const [isPhotoSelected, setPhotoSelected] = useState(false)
   const api = useApi()
   const router = useRouter()
-  const [photo, setPhoto] = useState(null)
   const { enqueueSnackbar: notify } = useSnackbar()
 
-  const isPhotoSelected = photo !== null
-
   const todaysDate = new Date()
+  const userCenter = centers.filter((center) => center._id === user.centerId)[0]
 
-  // TODO: Deal with collection center
-  const { setValue, control, handleSubmit, errors } = useForm({
+  const { setValue, control, handleSubmit, reset, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
       arrivalDate: todaysDate.toISOString(),
-      center: 'POLIDEPORTIVO SANTA CECILIA',
+      centerId: '',
+      photo: '',
+      thumbnail: '',
     },
   })
 
   useEffect(() => {
     if (!user) router.replace('/signin')
-  }, [user])
-
-  function normalize(data) {
-    return {
-      ...data,
-      file: photo,
+    if (userCenter) {
+      setValue('centerId', userCenter._id)
+    } else {
+      notify(`El usuario ${user.email} no tiene centro de acopio asociado`, { variant: 'error' })
+      router.replace('/signin')
     }
-  }
+  }, [user])
 
   function backToDashboard() {
     router.replace('/dashboard')
   }
 
+  function onImageSelection(imgSelection) {
+    if (imgSelection.img) {
+      setValue('photo', imgSelection.img)
+    }
+
+    if (imgSelection.thumbnail) {
+      setValue('thumbnail', imgSelection.thumbnail)
+    }
+
+    setPhotoSelected(imgSelection.img && imgSelection.thumbnail)
+  }
+
   function resetForm() {
-    setValue('arrivalDate', todaysDate.toISOString())
-    setPhoto(null)
+    reset()
+    setPhotoSelected(false)
   }
 
   const onSubmit = async (data) => {
     try {
-      if (photo === null) {
+      if (!isPhotoSelected) {
         notify(i18n`No ha seleccionado la foto de la mercadería`, { variant: 'error' })
         return
       }
 
       setSubmitting(true)
-      data = normalize(data)
       await api.merchandise.create(data)
       notify(i18n`Mercadería registrada correctamente`, { variant: 'success' })
       resetForm()
@@ -73,60 +89,20 @@ const MerchandiseReception = ({ user }) => {
     }
   }
 
-  const toBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.addEventListener('load', () => resolve(reader.result))
-      reader.addEventListener('error', (error) => reject(error))
-    })
-
-  const onPhotoSelected = (fileObjs) => {
-    const photoFile = fileObjs[0]
-    if (photoFile) {
-      toBase64(photoFile).then((result) => {
-        setPhoto(result)
-      })
-    }
-  }
-
-  const imageSelector = () => {
-    let imageCtrl
-    if (isPhotoSelected) {
-      imageCtrl = (
-        <>
-          <img width="100%" src={photo} />
-        </>
-      )
-    } else {
-      imageCtrl = (
-        <DropzoneArea
-          acceptedFiles={['image/*']}
-          dropzoneText="Selecciona la foto de la mercadería"
-          filesLimit={1}
-          showAlerts={false}
-          onChange={onPhotoSelected}
-          onDelete={(fileObject) => console.log('Removed File:', fileObject)}
-        />
-      )
-    }
-
-    return imageCtrl
-  }
-
   return (
     <Layout user={user} backLabel="Volver" onBack={backToDashboard} my={0} mx={2}>
       <Typography variant="h1" gutterBottom>
         {i18n`Recepción de Mercadería`}
       </Typography>
+
       <Fragment>
         <Input
           name="center"
           label={i18n`Centro de acopio`}
-          control={control}
           inputProps={{
             readOnly: true,
           }}
+          value={userCenter ? userCenter.name : ''}
           error={Boolean(errors.name)}
           errorText={errors.name && errors.name.message}
         />
@@ -140,8 +116,37 @@ const MerchandiseReception = ({ user }) => {
           error={Boolean(errors.name)}
           errorText={errors.name && errors.name.message}
         />
-        {imageSelector()}
       </Fragment>
+      <ImageSelector
+        imgTargetWidth={IMG_TARGET_WIDTH}
+        thumbnailTargetWidth={THUMBNAIL_TARGET_WIDTH}
+        onSelection={onImageSelection}
+        isImageSelected={isPhotoSelected}
+        useThumbnail={true}
+      />
+      <div id="hiddenFields" style={{ display: 'none' }}>
+        <Input
+          name="centerId"
+          control={control}
+          inputProps={{
+            readOnly: true,
+          }}
+        />
+        <Input
+          name="photo"
+          control={control}
+          inputProps={{
+            readOnly: true,
+          }}
+        />
+        <Input
+          name="thumbnail"
+          control={control}
+          inputProps={{
+            readOnly: true,
+          }}
+        />
+      </div>
       {isPhotoSelected && (
         <>
           <Button

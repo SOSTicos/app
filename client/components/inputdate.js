@@ -6,7 +6,7 @@ import FormControl from '@material-ui/core/FormControl'
 import FormGroup from '@material-ui/core/FormGroup'
 import { Controller } from 'react-hook-form'
 import DateFnsUtils from '@date-io/date-fns'
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
+import { MuiPickersUtilsProvider, KeyboardDateTimePicker } from '@material-ui/pickers'
 import { es } from 'date-fns/locale'
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +30,7 @@ const InputDate = ({ inputRef, control, className, label, error, errorText, name
           <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
             <Controller
               error={error}
-              as={KeyboardDatePicker}
+              as={KeyboardDateTimePicker}
               fullWidth
               name={name}
               variant="outlined"
