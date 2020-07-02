@@ -117,12 +117,16 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 <ListItemText primary={i18n`Registrar`} />
               </MenuItem>
               <Divider />
-              {isAuth && (
-                <MenuItem onClick={() => navigate('/merchandise/reception')}>
+              {isAuth && [
+                <MenuItem key="merchandise_01" onClick={() => navigate('/merchandise')}>
                   <ShoppingCartIcon color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Recepción de mercadería`} />
-                </MenuItem>
-              )}
+                  <ListItemText primary={i18n`Listado de donativos`} />
+                </MenuItem>,
+                <MenuItem key="merchandise_01" onClick={() => navigate('/merchandise/reception')}>
+                  <ShoppingCartIcon color="primary" className={styles.icon} />
+                  <ListItemText primary={i18n`Recepción de donativo`} />
+                </MenuItem>,
+              ]}
               <Divider />
               {isAuth && (
                 <MenuItem

@@ -41,6 +41,15 @@ module.exports = (options) => {
     return uploadParameters.Key
   }
 
+  async function thumbnail(key) {
+    // TODO: Define bucket name
+    const params = {
+      Bucket: 'rodyce.sos.ticos',
+      Key: key,
+    }
+    return s3.getObject(params)
+  }
+
   function b64ToAWS(key, b64) {
     try {
       const dataPrefix = 'data:'
@@ -65,5 +74,5 @@ module.exports = (options) => {
     }
   }
 
-  return { upload }
+  return { upload, thumbnail }
 }

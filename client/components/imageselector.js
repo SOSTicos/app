@@ -100,7 +100,7 @@ const ImageSelector = ({
     imageCtrl = (
       <DropzoneArea
         acceptedFiles={['image/*']}
-        dropzoneText="Selecciona la foto de la mercadería"
+        dropzoneText="Selecciona la foto del donativo"
         filesLimit={1}
         showAlerts={false}
         onChange={onImageSelected}

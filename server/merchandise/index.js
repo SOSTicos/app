@@ -39,8 +39,8 @@ module.exports = ({ db }) => {
 
     const result = id
       ? await merchandiseCollection.findById(id)
-      : await merchandiseCollection.findMany(query)
-    if (!result) throw createError('No se encontró la mercadería solicitada', 404)
+      : await merchandiseCollection.findMany(query, { sort: '-arrivalDate' })
+    if (!result) throw createError('No se encontró el donativo solicitado', 404)
     return result
   }
 
@@ -68,5 +68,20 @@ module.exports = ({ db }) => {
     return merchandise.insertOne(data)
   }
 
-  return { fetch, create, fields }
+  /**
+   * Obtain merchandise thumbnail.
+   *
+   * @param {Object} data
+   * @return {Promise}
+   * @public
+   */
+  const thumbnail = async ({ user, ...data }, result, api) => {
+    user.can('read', 'merchandise')
+
+    const thumbnail = await api.thumbnail(data.id)
+    const stream = thumbnail.createReadStream()
+    return { 'Content-Type': 'image/jpeg', stream }
+  }
+
+  return { fetch, create, thumbnail, fields }
 }

@@ -24,7 +24,12 @@ const λ = (fn) => async (request, response) => {
   try {
     const data = await fn(request, response)
     response.statusCode = 200
-    response.json(data)
+    if (Object.prototype.hasOwnProperty.call(data, 'Content-Type')) {
+      response.setHeader('Content-Type', data['Content-Type'])
+      response.send(data.stream)
+    } else {
+      response.json(data)
+    }
   } catch (error) {
     if (error.statusCode === 401) return response.end(error.message)
     response.statusCode = error.statusCode || 500
