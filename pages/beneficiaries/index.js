@@ -5,7 +5,6 @@ import AddCircleIcon from '@material-ui/icons/AddCircle'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List'
-import Chip from '@material-ui/core/Chip'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { useRouter } from 'next/router'
@@ -17,7 +16,18 @@ import createSearch from '../../client/lib/search'
 import { getHost } from '../../client/lib/utils'
 import * as api from '../../client/lib/api'
 
-const SEARCH_KEYS = ['name', 'email', 'province', 'canton', 'district', 'docId', 'address', 'phone', 'centerId', 'necesities']
+const SEARCH_KEYS = [
+  'name',
+  'email',
+  'province',
+  'canton',
+  'district',
+  'docId',
+  'address',
+  'phone',
+  'centerId',
+  'necesities',
+]
 
 const search = createSearch(SEARCH_KEYS, {
   threshold: 0.8,
