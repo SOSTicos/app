@@ -51,13 +51,13 @@ jobs:
             - yarn-cache-{{ .Branch }}
             - yarn-cache-
       - run:
-          name: Install Vercel Now
-          command: sudo yarn global add vercel
+          name: Install Netlify
+          command: sudo yarn global add netlify-cli
       - run:
           name: Install dependencies
           command: yarn
       - deploy:
-          name: Deploy to Vercel
+          name: Deploy to Netlify
           command: bash scripts/deploy.sh
 
 workflows:

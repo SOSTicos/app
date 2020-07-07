@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "test": "npm run lint",
-    "lint": "xo --fix"
+    "lint": "xo --fix",
+    "postbuild": "next-on-netlify"
   },
   "dependencies": {
     "@casl/ability": "^4.0.8",
@@ -34,6 +35,7 @@
     "ms": "^2.1.2",
     "nanoid": "^3.1.5",
     "next": "9.3.6",
+    "next-on-netlify": "^2.3.0",
     "nodemailer": "^6.4.6",
     "nodemailer-html-to-text": "^3.1.0",
     "nookies": "^2.3.0",

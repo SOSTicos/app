@@ -1,7 +1,10 @@
 {
+  "name": "sosticos",
+  "public": false,
   "version": 2,
-  "scope": "sosticos",
   "env": {
+    "API_SECRET": "@api-secret",
+    "MONGO_URL": "@mongo-url",
     "NODE_ENV": "production"
   }
 }

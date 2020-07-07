@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 if [ "${CIRCLE_BRANCH}" == "production" ]; then
-  VERCEL_ORG_ID=${VERCEL_ORG_ID} VERCEL_PROJECT_ID=${VERCEL_PROJECT_ID} vercel --token ${VERCEL_TOKEN} --prod --confirm
+  netlify deploy -p -a ${NETLIFY_TOKEN} -s ${NETLIFY_PROD_SITE_ID} -d ./build
 elif [ "${CIRCLE_BRANCH}" == "master" ]; then
-  VERCEL_ORG_ID=${VERCEL_ORG_ID} VERCEL_PROJECT_ID=${VERCEL_PROJECT_ID} vercel --token ${VERCEL_TOKEN} --confirm
+  netlify deploy -p -a ${NETLIFY_TOKEN} -s ${NETLIFY_DEV_SITE_ID} -d ./build
 else
   echo "Environment not found!"
   exit 1
