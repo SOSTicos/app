@@ -8,20 +8,18 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/sosticos
-      - restore-cache:
+      - restore_cache:
           keys:
-            - yarn-cache-{{ checksum "yarn.lock" }}
-          paths:
-            - ./node_modules
-            - ./.next/cache
+            - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
           name: Install node packages
           command: yarn install --ignore-engines
       - save_cache:
           key: yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
-            - node_modules
-            - ~/.yarn-cache
+            - ./node_modules
+            - ./.next/cache
+
   test:
     docker:
       - image: circleci/node:latest
@@ -32,8 +30,7 @@ jobs:
           at: ~/sosticos
       - restore_cache:
           keys:
-            - yarn-cache-{{ .Branch }}
-            - yarn-cache-
+            - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
           name: Install dependencies
           command: yarn
@@ -50,8 +47,7 @@ jobs:
           at: ~/sosticos
       - restore_cache:
           keys:
-            - yarn-cache-{{ .Branch }}
-            - yarn-cache-
+            - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
           name: Install Netlify
           command: sudo yarn global add netlify-cli
