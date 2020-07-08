@@ -56,6 +56,9 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn
+      - run:
+          name: Build Netlify
+          command: netlify build
       - deploy:
           name: Deploy to Netlify
           command: bash scripts/deploy.sh
