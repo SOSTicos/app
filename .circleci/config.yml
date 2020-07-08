@@ -10,8 +10,10 @@ jobs:
           at: ~/sosticos
       - restore-cache:
           keys:
-            - yarn-cache-{{ .Branch }}
-            - yarn-cache-
+            - yarn-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+            - ./.next/cache
       - run:
           name: Install node packages
           command: yarn install --ignore-engines
