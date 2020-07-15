@@ -34,6 +34,7 @@ const MerchandiseReception = ({ user, centers = [] }) => {
     defaultValues: {
       arrivalDate: todaysDate.toISOString(),
       centerId: '',
+      description: '',
       photo: '',
       thumbnail: '',
     },
@@ -73,26 +74,26 @@ const MerchandiseReception = ({ user, centers = [] }) => {
   const onSubmit = async (data) => {
     try {
       if (!isPhotoSelected) {
-        notify(i18n`No ha seleccionado la foto de la mercadería`, { variant: 'error' })
+        notify(i18n`No ha seleccionado la foto del donativo`, { variant: 'error' })
         return
       }
 
       setSubmitting(true)
       await api.merchandise.create(data)
-      notify(i18n`Mercadería registrada correctamente`, { variant: 'success' })
+      notify(i18n`Donativo registrado correctamente`, { variant: 'success' })
       resetForm()
     } catch (error) {
       console.log(error)
-      notify(i18n`No se pudo registrar la mercadería`, { variant: 'error' })
+      notify(i18n`No se pudo registrar el donativo`, { variant: 'error' })
     } finally {
       setSubmitting(false)
     }
   }
 
   return (
-    <Layout user={user} backLabel="Volver" onBack={backToDashboard} my={0} mx={2}>
+    <Layout user={user} backLabel="Volver" onBack={() => router.back()} my={0} mx={2}>
       <Typography variant="h1" gutterBottom>
-        {i18n`Recepción de Mercadería`}
+        {i18n`Recepción de donativo`}
       </Typography>
 
       <Fragment>
@@ -113,6 +114,12 @@ const MerchandiseReception = ({ user, centers = [] }) => {
           okLabel="Aceptar"
           cancelLabel="Cancelar"
           maxDate={todaysDate}
+          error={Boolean(errors.name)}
+          errorText={errors.name && errors.name.message}
+        />
+        <Input
+          name="description"
+          label={i18n`Descripción`}
           error={Boolean(errors.name)}
           errorText={errors.name && errors.name.message}
         />

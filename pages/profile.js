@@ -167,7 +167,7 @@ const Profile = ({ user, centers = [] }) => {
         </Paper>
       )}
       <Button variant="outlined" color="secondary" onClick={onExit}>
-        {i18n`Cerrar sessión`}
+        {i18n`Cerrar sesión`}
       </Button>
     </Layout>
   )
