@@ -122,7 +122,7 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                   <ShoppingCartIcon color="primary" className={styles.icon} />
                   <ListItemText primary={i18n`Listado de donativos`} />
                 </MenuItem>,
-                <MenuItem key="merchandise_01" onClick={() => navigate('/merchandise/reception')}>
+                <MenuItem key="merchandise_02" onClick={() => navigate('/merchandise/reception')}>
                   <ShoppingCartIcon color="primary" className={styles.icon} />
                   <ListItemText primary={i18n`Recepción de donativo`} />
                 </MenuItem>,

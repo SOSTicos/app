@@ -120,6 +120,7 @@ const MerchandiseReception = ({ user, centers = [] }) => {
         <Input
           name="description"
           label={i18n`Descripción`}
+          control={control}
           error={Boolean(errors.name)}
           errorText={errors.name && errors.name.message}
         />
