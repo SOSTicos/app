@@ -8,6 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import ListItemText from '@material-ui/core/ListItemText'
 import AppsIcon from '@material-ui/icons/Apps'
+import PeopleOutline from '@material-ui/icons/PeopleOutline'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
@@ -125,6 +126,13 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 <MenuItem key="merchandise_02" onClick={() => navigate('/merchandise/reception')}>
                   <ShoppingCartIcon color="primary" className={styles.icon} />
                   <ListItemText primary={i18n`Recepción de donativo`} />
+                </MenuItem>,
+              ]}
+              <Divider />
+              {isAuth && [
+                <MenuItem key="beneficiaries_01" onClick={() => navigate('/beneficiaries')}>
+                  <PeopleOutline color="primary" className={styles.icon} />
+                  <ListItemText primary={i18n`Beneficiarios`} />
                 </MenuItem>,
               ]}
               <Divider />

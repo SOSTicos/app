@@ -112,10 +112,14 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
         district: data.district,
         address: data.address,
         necesities: data.necesities,
-        status: data.status
+        status: data.status,
       },
       isNil
-    );
+    )
+  }
+
+  function backToBeneficiaries() {
+    router.replace('/beneficiaries')
   }
 
   const onSubmit = async (data) => {
@@ -124,6 +128,7 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
       data = normalize(data)
       await api.beneficiaries.update({ ...data, id: userId })
       notify(i18n`Beneficiario actualizado`, { variant: 'success' })
+      backToBeneficiaries()
     } catch (error) {
       console.log(error)
       notify(i18n`No se pudo actualizar el beneficiario`, { variant: 'error' })

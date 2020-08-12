@@ -14,19 +14,18 @@ import Search from '../../client/components/search'
 import { getSession, getHeaders } from '../../client/lib/auth'
 import createSearch from '../../client/lib/search'
 import { getHost } from '../../client/lib/utils'
+import { provincias, cantones, distritos } from '../../shared/lib/locations'
+import { estados } from '../../shared/lib/statuses'
 import * as api from '../../client/lib/api'
 
 const SEARCH_KEYS = [
   'name',
   'email',
-  'province',
-  'canton',
-  'district',
-  'docId',
+  'provinceText',
+  'cantonText',
+  'districtText',
   'address',
   'phone',
-  'centerId',
-  'necesities',
 ]
 
 const search = createSearch(SEARCH_KEYS, {
@@ -39,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginTop: theme.spacing(0),
     marginBottom: theme.spacing(0),
-    // backgroundColor: lighten(theme.palette.primary.main, 0.9),
   },
 
   chip: {
@@ -68,9 +66,11 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
 
   const renderItem = (item) => {
     const location =
-      (item?.province || '') + ' ' + (item?.canton || '') + ' ' + (item?.district || '')
-
-    console.log(item)
+      (item?.provinceText || '') +
+      ', ' +
+      (item?.cantonText || '') +
+      ', ' +
+      (item?.districtText || '')
 
     return (
       <Paper key={item._id} style={{ marginBottom: 16 }}>
@@ -89,6 +89,7 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
                   <Box display="flex" flexDirection="column" justifyContent="space-between">
                     <Typography>{item.name}</Typography>
                     <Typography>{location.trim()}</Typography>
+                    <Typography color="secondary">{estados[item.status] || ''}</Typography>
                   </Box>
                 </Box>
               </Fragment>
@@ -139,9 +140,16 @@ export const getServerSideProps = async (ctx) => {
 
   try {
     beneficiaries = session.user ? await api.get(`${host}/api/beneficiaries`, {}, { headers }) : []
+    beneficiaries = beneficiaries.map((b) => {
+      return {
+        ...b,
+        provinceText: provincias[b.province],
+        districtText: distritos[b.district],
+        cantonText: cantones[b.canton],
+      }
+    })
   } catch (_) {}
 
-  // console.log('users', session, users)
   return { props: { ...session, beneficiaries } }
 }
 

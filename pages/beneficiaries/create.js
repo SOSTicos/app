@@ -13,7 +13,7 @@ import Input from '../../client/components/input'
 import Select from '../../client/components/select'
 import { getSession } from '../../client/lib/auth'
 import useApi from '../../client/hooks/api'
-import { isPhone, toPhone } from '../../shared/lib/utils'
+import { isPhone, toPhone, isEmail } from '../../shared/lib/utils'
 import i18n from '../../shared/lib/i18n'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
 import { estados } from '../../shared/lib/statuses'
@@ -48,7 +48,7 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
       district: '',
       address: '',
       necesities: '',
-      status: ''
+      status: '',
     },
   })
 
@@ -74,10 +74,14 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
         district: data.district,
         address: data.address,
         necesities: data.necesities,
-        status: data.status
+        status: data.status,
       },
       isNil
     )
+  }
+
+  function backToBeneficiaries() {
+    router.replace('/beneficiaries')
   }
 
   const onSubmit = async (data) => {
@@ -86,6 +90,7 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
       data = normalize(data)
       await api.beneficiaries.create(data)
       notify(i18n`Beneficiario creado`, { variant: 'success' })
+      backToBeneficiaries()
     } catch (error) {
       console.log(error)
       notify(i18n`No se pudo crear al beneficiario`, { variant: 'error' })
@@ -102,11 +107,15 @@ const BeneficiaryCreate = ({ user, centers = [] }) => {
       <br />
       <Input
         name="email"
+        type="email"
         control={control}
         label={i18n`Email`}
-        rules={{ required: i18n`Requerido` }}
         error={Boolean(errors.email)}
         errorText={errors.email && errors.email.message}
+        rules={{
+          required: i18n`Requerido`,
+          validate: (value) => (!value ? true : isEmail(value) || i18n`Email inválido`),
+        }}
       />
 
       <Input

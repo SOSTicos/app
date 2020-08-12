@@ -11,6 +11,11 @@ export const isPhone = (number, code, line) => {
   return Boolean(toPhone(number, code, line))
 }
 
+export const isEmail = (email) => {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[(?:\d{1,3}\.){3}\d{1,3}])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/
+  return re.test(email)
+}
+
 export const getHost = (ctx) => {
   if (ctx) {
     const { req } = ctx
