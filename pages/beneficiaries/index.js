@@ -24,6 +24,7 @@ const SEARCH_KEYS = [
   'provinceText',
   'cantonText',
   'districtText',
+  'statusText',
   'address',
   'phone',
 ]
@@ -146,6 +147,8 @@ export const getServerSideProps = async (ctx) => {
         provinceText: provincias[b.province],
         districtText: distritos[b.district],
         cantonText: cantones[b.canton],
+        statusText:
+          b.status && b.status >= 0 && b.status < estados.length ? estados[b.status] : 'N/A',
       }
     })
   } catch (_) {}
