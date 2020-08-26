@@ -90,9 +90,9 @@ const VolunteerList = ({ user, users = [] }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="flex-end">
                   <Box display="flex" flexDirection="column" justifyContent="space-between">
                     <Typography>{item.name}</Typography>
-                    {
-                      // <Typography>{location.trim()}</Typography>
-                    }
+                    <Typography color="secondary">
+                      {item.phone ? item.phone : 'Sin Teléfono'}
+                    </Typography>
                   </Box>
                   <Chip className={styles.chip} label={role} color="primary" size="small" />
                 </Box>

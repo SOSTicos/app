@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import ListItemText from '@material-ui/core/ListItemText'
 import AppsIcon from '@material-ui/icons/Apps'
-import PeopleOutline from '@material-ui/icons/PeopleOutline'
+import PeopleAlt from '@material-ui/icons/PeopleAlt'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import CropFreeIcon from '@material-ui/icons/CropFree'
 import DashboardIcon from '@material-ui/icons/Dashboard'
+import SupervisedUserCircle from '@material-ui/icons/SupervisedUserCircle'
 import Divider from '@material-ui/core/Divider'
 import Button from './button'
 import * as tokens from '../../shared/lib/tokens'
@@ -131,8 +132,12 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
               <Divider />
               {isAuth && [
                 <MenuItem key="beneficiaries_01" onClick={() => navigate('/beneficiaries')}>
-                  <PeopleOutline color="primary" className={styles.icon} />
+                  <SupervisedUserCircle color="primary" className={styles.icon} />
                   <ListItemText primary={i18n`Beneficiarios`} />
+                </MenuItem>,
+                <MenuItem key="volunteers_01" onClick={() => navigate('/volunteers')}>
+                  <PeopleAlt color="primary" className={styles.icon} />
+                  <ListItemText primary={i18n`Voluntarios`} />
                 </MenuItem>,
               ]}
               <Divider />

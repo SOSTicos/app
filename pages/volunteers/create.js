@@ -56,9 +56,10 @@ const VolunteerCreate = ({ user, centers = [] }) => {
       data = normalize(data)
       await api.users.create(data)
       notify(i18n`Voluntario creado`, { variant: 'success' })
+      router.replace('/volunteers')
     } catch (error) {
       console.log(error)
-      notify(i18n`No se pudo crear al voluntario`, { variant: 'error' })
+      notify(i18n`No se pudo crear al voluntario: ${error}`, { variant: 'error' })
     } finally {
       setSubmitting(false)
     }
