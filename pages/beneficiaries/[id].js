@@ -16,6 +16,8 @@ import Button from '../../client/components/button'
 import Input from '../../client/components/input'
 import Line from '../../client/components/line'
 import Select from '../../client/components/select'
+import Tab from '@material-ui/core/Tab'
+import Tabs from '@material-ui/core/Tabs'
 import { getSession, getHeaders } from '../../client/lib/auth'
 import { getHost } from '../../client/lib/utils'
 import useApi from '../../client/hooks/api'
@@ -24,6 +26,7 @@ import i18n from '../../shared/lib/i18n'
 import { isPhone, toPhone } from '../../shared/lib/utils'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
 import { estados } from '../../shared/lib/statuses'
+import deliveryStatuses from '../../shared/lib/delivery-statuses'
 
 const useStyles = makeStyles((theme) => ({
   inline: {
@@ -45,9 +48,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const BeneficiaryDetail = ({ user, data, centers = [] }) => {
+const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
   const [submitting, setSubmitting] = useState(false)
   const [editting, setEditting] = useState(false)
+  const [editDelivery, setEditDelivery] = useState(false)
   const router = useRouter()
   const styles = useStyles()
   const api = useApi()
@@ -68,10 +72,12 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
       necesities: data?.necesities,
       status: data.status,
       center: data?.centerId ? find(centers, { _id: data?.centerId }) : { _id: '', name: '' },
+      carrier: data?.carrierId ? find(carriers, { _id: data?.carrierId }) : { _id: '', name: '' },
     },
   })
 
   const center = find(centers, { _id: data?.centerId }) || {}
+  const carrier = find(carriers, { _id: data?.carrierId }) || {}
   const { province, canton, district } = watch()
   const provinces = Object.keys(all)
   const cantons = province ? Object.keys(all[province] || {}) : []
@@ -106,7 +112,7 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
         docId: data.docId,
         centerId: data?.center?._id,
         phone: toPhone(data.phone),
-        email: data.email.toLowerCase(),
+        email: data.email?.toLowerCase(),
         province: data.province,
         canton: data.canton,
         district: data.district,
@@ -141,6 +147,15 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
   const onToggleEdit = () => {
     setEditting((editting) => !editting)
   }
+  const onToggleEditDelivery = () => {
+    setEditDelivery((editDelivery) => !editDelivery)
+  }
+
+  const [tabVal, setTabVal] = React.useState(0)
+
+  const handleTabChange = (event, newValue) => {
+    setTabVal(newValue)
+  }
 
   return (
     <Layout user={user} backLabel="Volver" onBack={() => router.back()} my={0} mx={2}>
@@ -148,171 +163,232 @@ const BeneficiaryDetail = ({ user, data, centers = [] }) => {
         {i18n`Beneficiario`}
       </Typography>
 
-      <Box display="flex" justifyContent="flex-end">
-        <Button
-          size="small"
-          className={styles.button}
-          fullWidth={false}
-          variant="text"
-          onClick={onToggleEdit}
-        >
-          {editting ? <ClearIcon className={styles.icon} /> : <EditIcon className={styles.icon} />}
-          {editting ? i18n`Cancelar` : i18n`Editar`}
-        </Button>
-      </Box>
+      <Tabs
+        value={tabVal}
+        onChange={handleTabChange}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+      >
+        <Tab label="Datos generales" />
+        <Tab label="Estado de entrega" />
+      </Tabs>
 
-      {editting ? (
-        <Fragment>
-          <Input disabled name="email" control={control} label={i18n`Email`} />
-          <Input
-            name="name"
-            label={i18n`Nombre`}
-            control={control}
-            error={Boolean(errors.name)}
-            errorText={errors.name && errors.name.message}
-          />
-
-          <Input
-            name="docId"
-            control={control}
-            label={i18n`Cédula`}
-            error={Boolean(errors.docId)}
-            errorText={errors.docId && errors.docId.message}
-          />
-
-          <Input
-            label={i18n`Teléfono`}
-            error={Boolean(errors.phone)}
-            errorText={errors.phone && errors.phone.message}
-            type="number"
-            name="phone"
-            rules={{
-              validate: (value) =>
-                !value ? true : isPhone(value, 'CR', true) || i18n`Teléfono inválido`,
-            }}
-            control={control}
-          />
-
-          <Select
-            name="province"
-            control={control}
-            label={i18n`Provincia`}
-            rules={{ required: i18n`Requerido` }}
-            error={Boolean(errors.province)}
-            errorText={errors.province && errors.province.message}
-          >
-            {provinces.map((code) => (
-              <option key={code} value={code}>
-                {provincias[code]}
-              </option>
-            ))}
-          </Select>
-
-          <FormGroup row className={styles.inline}>
-            <Select
-              name="canton"
-              control={control}
-              label={i18n`Cantón`}
-              rules={{ required: i18n`Requerido` }}
-              className={styles.inlineControl}
-              error={Boolean(errors.canton)}
-              errorText={errors.canton && errors.canton.message}
-            >
-              {cantons.map((code) => (
-                <option key={code} value={code}>
-                  {cantones[code]}
-                </option>
-              ))}
-            </Select>
-            <Select
-              name="district"
-              control={control}
-              label={i18n`Distrito`}
-              rules={{ required: i18n`Requerido` }}
-              className={styles.inlineControl}
-              error={Boolean(errors.district)}
-              errorText={errors.district && errors.district.message}
-            >
-              {districts.map((code) => (
-                <option key={code} value={code}>
-                  {distritos[code]}
-                </option>
-              ))}
-            </Select>
-          </FormGroup>
-
-          <Input
-            type="text"
-            name="address"
-            control={control}
-            label={i18n`Otras señas`}
-            rules={{ required: i18n`Requerido` }}
-            error={Boolean(errors.address)}
-            errorText={errors.address && errors.address.message}
-          />
-
-          <Autocomplete
-            label={i18n`Centro de acopio`}
-            name="center"
-            control={control}
-            options={centers}
-            error={Boolean(errors.center)}
-            errorText={errors.center && errors.center.message}
-            rules={{ required: i18n`Requerido` }}
-          />
-
-          <Input
-            type="text"
-            name="necesities"
-            control={control}
-            label={i18n`Necesidades`}
-            error={Boolean(errors.address)}
-            errorText={errors.address && errors.address.message}
-          />
-
-          <Select
-            name="status"
-            control={control}
-            label={i18n`Estado`}
-            rules={{ required: i18n`Requerido` }}
-            error={Boolean(errors.status)}
-            errorText={errors.status && errors.status.message}
-          >
-            {estados.map((value, key) => (
-              <option key={key} value={key}>
-                {value}
-              </option>
-            ))}
-          </Select>
-
+      <div style={{ display: tabVal === 0 ? '' : 'none' }}>
+        <Box display="flex" justifyContent="flex-end">
           <Button
-            style={{ marginBottom: 0 }}
-            type="submit"
-            loading={submitting}
-            loadingText={i18n`Guardando...`}
-            disabled={!isEmpty(errors)}
-            onClick={handleSubmit(onSubmit)}
+            size="small"
+            className={styles.button}
+            fullWidth={false}
+            variant="text"
+            onClick={onToggleEdit}
           >
-            {i18n`Guardar`}
+            {editting ? (
+              <ClearIcon className={styles.icon} />
+            ) : (
+              <EditIcon className={styles.icon} />
+            )}
+            {editting ? i18n`Cancelar` : i18n`Editar`}
           </Button>
-        </Fragment>
-      ) : (
-        <Paper className={styles.paper}>
-          <Line label={i18n`Email`} value={data.email} />
-          <Line label={i18n`Nombre`} value={data.name} />
-          <Line label={i18n`Cédula`} value={data.docId} />
-          <Line label={i18n`Teléfono`} value={data.phone} />
-          <Line label={i18n`Provincia`} value={provincias[data.province]} />
-          <Line label={i18n`Cantón`} value={cantones[data.canton]} />
-          <Line label={i18n`Distrito`} value={distritos[data.district]} />
-          <Line label={i18n`Otras señas`} value={data.address} />
-          <Line label={i18n`Centro de acopio`} value={center.name} />
-          <Line label={i18n`Necesidades`} value={data.necesities} />
-          <Line label={i18n`Estado`} value={estados[data.status]} />
-        </Paper>
-      )}
-      <br />
-      <br />
+        </Box>
+        {editting ? (
+          <Fragment>
+            <Input disabled name="email" control={control} label={i18n`Email`} />
+            <Input
+              name="name"
+              label={i18n`Nombre`}
+              control={control}
+              error={Boolean(errors.name)}
+              errorText={errors.name && errors.name.message}
+            />
+
+            <Input
+              name="docId"
+              control={control}
+              label={i18n`Cédula`}
+              error={Boolean(errors.docId)}
+              errorText={errors.docId && errors.docId.message}
+            />
+
+            <Input
+              label={i18n`Teléfono`}
+              error={Boolean(errors.phone)}
+              errorText={errors.phone && errors.phone.message}
+              type="number"
+              name="phone"
+              rules={{
+                validate: (value) =>
+                  !value ? true : isPhone(value, 'CR', true) || i18n`Teléfono inválido`,
+              }}
+              control={control}
+            />
+
+            <Select
+              name="province"
+              control={control}
+              label={i18n`Provincia`}
+              rules={{ required: i18n`Requerido` }}
+              error={Boolean(errors.province)}
+              errorText={errors.province && errors.province.message}
+            >
+              {provinces.map((code) => (
+                <option key={code} value={code}>
+                  {provincias[code]}
+                </option>
+              ))}
+            </Select>
+
+            <FormGroup row className={styles.inline}>
+              <Select
+                name="canton"
+                control={control}
+                label={i18n`Cantón`}
+                rules={{ required: i18n`Requerido` }}
+                className={styles.inlineControl}
+                error={Boolean(errors.canton)}
+                errorText={errors.canton && errors.canton.message}
+              >
+                {cantons.map((code) => (
+                  <option key={code} value={code}>
+                    {cantones[code]}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                name="district"
+                control={control}
+                label={i18n`Distrito`}
+                rules={{ required: i18n`Requerido` }}
+                className={styles.inlineControl}
+                error={Boolean(errors.district)}
+                errorText={errors.district && errors.district.message}
+              >
+                {districts.map((code) => (
+                  <option key={code} value={code}>
+                    {distritos[code]}
+                  </option>
+                ))}
+              </Select>
+            </FormGroup>
+
+            <Input
+              type="text"
+              name="address"
+              control={control}
+              label={i18n`Otras señas`}
+              rules={{ required: i18n`Requerido` }}
+              error={Boolean(errors.address)}
+              errorText={errors.address && errors.address.message}
+            />
+
+            <Autocomplete
+              label={i18n`Centro de acopio`}
+              name="center"
+              control={control}
+              options={centers}
+              error={Boolean(errors.center)}
+              errorText={errors.center && errors.center.message}
+              rules={{ required: i18n`Requerido` }}
+            />
+
+            <Input
+              type="text"
+              name="necesities"
+              control={control}
+              label={i18n`Necesidades`}
+              error={Boolean(errors.address)}
+              errorText={errors.address && errors.address.message}
+            />
+
+            <Select
+              name="status"
+              control={control}
+              label={i18n`Estado`}
+              rules={{ required: i18n`Requerido` }}
+              error={Boolean(errors.status)}
+              errorText={errors.status && errors.status.message}
+            >
+              {estados.map((value, key) => (
+                <option key={key} value={key}>
+                  {value}
+                </option>
+              ))}
+            </Select>
+
+            <Button
+              style={{ marginBottom: 0 }}
+              type="submit"
+              loading={submitting}
+              loadingText={i18n`Guardando...`}
+              disabled={!isEmpty(errors)}
+              onClick={handleSubmit(onSubmit)}
+            >
+              {i18n`Guardar`}
+            </Button>
+          </Fragment>
+        ) : (
+          <Paper className={styles.paper}>
+            <Line label={i18n`Email`} value={data.email} />
+            <Line label={i18n`Nombre`} value={data.name} />
+            <Line label={i18n`Cédula`} value={data.docId} />
+            <Line label={i18n`Teléfono`} value={data.phone} />
+            <Line label={i18n`Provincia`} value={provincias[data.province]} />
+            <Line label={i18n`Cantón`} value={cantones[data.canton]} />
+            <Line label={i18n`Distrito`} value={distritos[data.district]} />
+            <Line label={i18n`Otras señas`} value={data.address} />
+            <Line label={i18n`Centro de acopio`} value={center.name} />
+            <Line label={i18n`Necesidades`} value={data.necesities} />
+            <Line label={i18n`Estado`} value={estados[data.status]} />
+          </Paper>
+        )}
+      </div>
+
+      <div style={{ display: tabVal === 1 ? '' : 'none' }}>
+        <Box display="flex" justifyContent="flex-end">
+          <Button
+            size="small"
+            className={styles.button}
+            fullWidth={false}
+            variant="text"
+            onClick={onToggleEditDelivery}
+          >
+            {editDelivery ? (
+              <ClearIcon className={styles.icon} />
+            ) : (
+              <EditIcon className={styles.icon} />
+            )}
+            {editDelivery ? i18n`Cancelar` : i18n`Asignar transportista`}
+          </Button>
+        </Box>
+
+        {editDelivery ? (
+          <Fragment>
+            <Autocomplete
+              label={i18n`Transportista`}
+              name="carrier"
+              control={control}
+              options={carriers}
+              error={Boolean(errors.carriers)}
+              errorText={errors.carrier && errors.carrier.message}
+            />
+            <Button
+              style={{ marginBottom: 0 }}
+              type="submit"
+              loading={submitting}
+              loadingText={i18n`Guardando...`}
+              disabled={!isEmpty(errors)}
+              onClick={handleSubmit(onSubmit)}
+            >
+              {i18n`Guardar`}
+            </Button>
+          </Fragment>
+        ) : (
+          <Paper className={styles.paper}>
+            <Line label={i18n`Transportista`} value={carrier.name || '--'} />
+            <Line label={i18n`Estado`} value={data.deliveryStatus || deliveryStatuses[0]} />
+          </Paper>
+        )}
+      </div>
     </Layout>
   )
 }
@@ -324,8 +400,18 @@ export const getServerSideProps = async (ctx) => {
   try {
     const host = getHost(ctx)
     const headers = getHeaders(ctx)
+    const carriers = [
+      {
+        _id: '1',
+        name: 'Don Evaristo',
+      },
+      {
+        _id: '2',
+        name: 'Rodyce',
+      },
+    ]
     const data = await api.get(`${host}/api/beneficiaries/${id}`, {}, { headers })
-    return { props: omitBy({ ...session, data }, isNil) }
+    return { props: omitBy({ ...session, data, carriers }, isNil) }
   } catch (error) {
     console.log(error)
     return { props: { ...session } }
