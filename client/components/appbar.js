@@ -114,7 +114,7 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 <DashboardIcon color="primary" className={styles.icon} />
                 <ListItemText primary={i18n`Inicio`} />
               </MenuItem>
-              <MenuItem onClick={() => navigate('/scan')}>
+              <MenuItem onClick={() => navigate('/signin')}>
                 <CropFreeIcon color="primary" className={styles.icon} />
                 <ListItemText primary={i18n`Registrar`} />
               </MenuItem>
