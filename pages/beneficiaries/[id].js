@@ -52,6 +52,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
   const [submitting, setSubmitting] = useState(false)
   const [editting, setEditting] = useState(false)
   const [editDelivery, setEditDelivery] = useState(false)
+  const [tabVal, setTabVal] = useState(0)
   const router = useRouter()
   const styles = useStyles()
   const api = useApi()
@@ -150,8 +151,6 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
   const onToggleEditDelivery = () => {
     setEditDelivery((editDelivery) => !editDelivery)
   }
-
-  const [tabVal, setTabVal] = React.useState(0)
 
   const handleTabChange = (event, newValue) => {
     setTabVal(newValue)
