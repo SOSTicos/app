@@ -144,9 +144,9 @@ export const getServerSideProps = async (ctx) => {
     beneficiaries = beneficiaries.map((b) => {
       return {
         ...b,
-        provinceText: provincias[b.province],
-        districtText: distritos[b.district],
-        cantonText: cantones[b.canton],
+        provinceText: b.province ? provincias[b.province] : 'n/A',
+        districtText: b.district ? distritos[b.district] : 'n/a',
+        cantonText: b.canton ? cantones[b.canton] : 'n/a',
         statusText:
           b.status && b.status >= 0 && b.status < estados.length ? estados[b.status] : 'N/A',
       }

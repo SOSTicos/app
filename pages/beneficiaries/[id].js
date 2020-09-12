@@ -129,6 +129,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
     router.replace('/beneficiaries')
   }
 
+  // Function called when submitting an updated beneficiary
   const onSubmit = async (data) => {
     try {
       setSubmitting(true)
@@ -137,8 +138,23 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
       notify(i18n`Beneficiario actualizado`, { variant: 'success' })
       backToBeneficiaries()
     } catch (error) {
-      console.log(error)
       notify(i18n`No se pudo actualizar el beneficiario`, { variant: 'error' })
+    } finally {
+      setSubmitting(false)
+      setEditting(false)
+    }
+  }
+
+  // Function called when submitting an updated beneficiary
+  const onTransit = async (carrierData) => {
+    try {
+      setSubmitting(true)
+      console.log('user data.', data)
+      console.log('carrier data.', carrierData)
+      notify(i18n`El paquete esta 'En tránsito'`, { variant: 'success' })
+      //backToBeneficiaries();
+    } catch (error) {
+      notify(i18n`No se pudo colocar al paquete 'En tránsito'`, { variant: 'error' })
     } finally {
       setSubmitting(false)
       setEditting(false)
@@ -376,7 +392,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
               loading={submitting}
               loadingText={i18n`Guardando...`}
               disabled={!isEmpty(errors)}
-              onClick={handleSubmit(onSubmit)}
+              onClick={handleSubmit(onTransit)}
             >
               {i18n`Guardar`}
             </Button>
@@ -399,17 +415,19 @@ export const getServerSideProps = async (ctx) => {
   try {
     const host = getHost(ctx)
     const headers = getHeaders(ctx)
-    const carriers = [
-      {
-        _id: '1',
-        name: 'Don Evaristo',
-      },
-      {
-        _id: '2',
-        name: 'Rodyce',
-      },
-    ]
+
+    // Pulls the users with the carrier role from the carriers endpoint.
+    const carriersBackend = await api.get(`${host}/api/carriers`, {}, { headers })
+
+    // Formats the data to join the name and the phone for the drop down.
+    const carriers = carriersBackend.map((e, i) => {
+      return { _id: i, name: e.name + ' - ' + e.phone }
+    })
+
+    // Pulls the beneficiaries from the endpoint.
     const data = await api.get(`${host}/api/beneficiaries/${id}`, {}, { headers })
+
+    // The data and carriers objects MUST have that name if they're implicitely set or have the assignment be explicit.
     return { props: omitBy({ ...session, data, carriers }, isNil) }
   } catch (error) {
     console.log(error)
