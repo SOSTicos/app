@@ -17,6 +17,8 @@ module.exports = ({ db }) => {
     'district',
     'necesities',
     'status',
+    'deliveryStatus',
+    'carrier',
   ]
 
   const setIndexes = async () => {
@@ -37,6 +39,8 @@ module.exports = ({ db }) => {
       necesities: data.necesities,
       district: data.district,
       status: data.status,
+      carrier: data.carrier ? data.carrier : '0',
+      deliveryStatus: data.deliveryStatus ? data.deliveryStatus : 0,
       updatedAt: data.updateAt || Date.now(),
       createdAt: data.createdAt || Date.now(),
     }
@@ -108,6 +112,11 @@ module.exports = ({ db }) => {
     if ('canton' in data && !isCanton(data.canton)) throw createError('Cantón inválido')
     if ('district' in data && !isDistrict(data.district)) throw createError('Distrito inválido')
     if (data.address && !isString(data.necesities)) throw createError('Necesities inválido')
+    if (
+      data.deliveryStatus > 0 &&
+      (data.carrier === null || data.carrier === undefined || data.carrier === '0')
+    )
+      throw createError('No se puede marcar en tránsito sin un transpotista asignado.')
 
     return true
   }

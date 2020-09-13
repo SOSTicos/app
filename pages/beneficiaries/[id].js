@@ -72,13 +72,14 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
       address: data?.address || '',
       necesities: data?.necesities,
       status: data.status,
+      deliveryStatus: data.deliveryStatus ? data.deliveryStatus : 0,
       center: data?.centerId ? find(centers, { _id: data?.centerId }) : { _id: '', name: '' },
       carrier: data?.carrierId ? find(carriers, { _id: data?.carrierId }) : { _id: '', name: '' },
     },
   })
 
   const center = find(centers, { _id: data?.centerId }) || {}
-  const carrier = find(carriers, { _id: data?.carrierId }) || {}
+  const carrier = find(carriers, { _id: data?.carrier }) || {}
   const { province, canton, district } = watch()
   const provinces = Object.keys(all)
   const cantons = province ? Object.keys(all[province] || {}) : []
@@ -120,6 +121,8 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
         address: data.address,
         necesities: data.necesities,
         status: data.status,
+        deliveryStatus: data.deliveryStatus ? data.deliveryStatus : 0,
+        carrier: data.carrier ? data.carrier : '0',
       },
       isNil
     )
@@ -149,10 +152,18 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
   const onTransit = async (carrierData) => {
     try {
       setSubmitting(true)
-      console.log('user data.', data)
-      console.log('carrier data.', carrierData)
+
+      // Apply UPDATE: Assgining the carrier Id from the one selected in the drop down. Set status to 1.
+      data.carrier = carrierData?.carrier._id
+      data.deliveryStatus = 1
+
+      // Nomalizing data so that it won't fail on update save.
+      data = normalize(data)
+
+      // Requesting update from the API.
+      await api.beneficiaries.update({ ...data, id: userId })
       notify(i18n`El paquete esta 'En tránsito'`, { variant: 'success' })
-      //backToBeneficiaries();
+      backToBeneficiaries()
     } catch (error) {
       notify(i18n`No se pudo colocar al paquete 'En tránsito'`, { variant: 'error' })
     } finally {
@@ -400,7 +411,13 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
         ) : (
           <Paper className={styles.paper}>
             <Line label={i18n`Transportista`} value={carrier.name || '--'} />
-            <Line label={i18n`Estado`} value={data.deliveryStatus || deliveryStatuses[0]} />
+            <Line
+              label={i18n`Estado`}
+              value={
+                (data.deliveryStatus ? deliveryStatuses[data.deliveryStatus] : false) ||
+                deliveryStatuses[0]
+              }
+            />
           </Paper>
         )}
       </div>
@@ -421,7 +438,7 @@ export const getServerSideProps = async (ctx) => {
 
     // Formats the data to join the name and the phone for the drop down.
     const carriers = carriersBackend.map((e, i) => {
-      return { _id: i, name: e.name + ' - ' + e.phone }
+      return { _id: e._id, name: e.name + ' - ' + e.phone }
     })
 
     // Pulls the beneficiaries from the endpoint.
