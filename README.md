@@ -1,5 +1,30 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/zeit/next.js/tree/canary/packages/create-next-app).
 
+## Requirements
+1. NodeJS
+2. MongoDB
+
+## Setup
+1. Clone the repository
+`git clone git@github.com:SOSTicos/app.git`
+
+2. Install node modules
+`npm install`
+
+3. Add an `.env` file
+
+4. Add a super admin user at `.env` file with:
+`process.env.SUPERADMIN_EMAIL`
+
+5. Execute the app with `npm run dev`
+
+6. Add a "Centro de Acopio" with a super admin.
+    * Open menu icon
+    * Click "Centros"
+    * Fill the form and submit
+
+7. Complete the form for a "Voluntario" to add all the required fields for the admin and assign a "Centro de Acopio"
+
 ## Getting Started
 
 First, run the development server:
