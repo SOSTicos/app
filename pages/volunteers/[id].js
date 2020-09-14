@@ -25,6 +25,7 @@ import { toPhone } from '../../shared/lib/utils'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
 
 const roles = [
+  { value: 'superadmin', label: i18n`Super Administrador` },
   { value: 'admin', label: i18n`Administrador` },
   { value: 'coordinator', label: i18n`Coordinador` },
   { value: 'carrier', label: i18n`Transportista` },
@@ -296,7 +297,7 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
           {data.district && <Line label={i18n`Distrito`} value={distritos[data.district]} />}
           {data.address && <Line label={i18n`Otras señas`} value={data.address} />}
           {center && center._id && <Line label={i18n`Centro de acopio`} value={center.name} />}
-          {data.role && <Line label={i18n`Rol`} value={role.value} />}
+          {data.role && <Line label={i18n`Rol`} value={role.label} />}
         </Paper>
       )}
     </Layout>
