@@ -9,6 +9,7 @@ import Menu from '@material-ui/core/Menu'
 import ListItemText from '@material-ui/core/ListItemText'
 import AppsIcon from '@material-ui/icons/Apps'
 import PeopleAlt from '@material-ui/icons/PeopleAlt'
+import LocationOnIcon from '@material-ui/icons/LocationOn'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
@@ -50,6 +51,11 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
   const open = Boolean(anchorElement)
 
   const isAuth = Boolean(user)
+
+  let canManageCenters = false
+  if (isAuth) {
+    canManageCenters = ['superadmin', 'admin'].includes(user.role)
+  }
 
   const onMenu = (event) => {
     setAnchorElement(event.currentTarget)
@@ -119,6 +125,12 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 <ListItemText primary={i18n`Registrar`} />
               </MenuItem>
               <Divider />
+              {isAuth && canManageCenters && (
+                <MenuItem key="centers_01" onClick={() => navigate('/centers')}>
+                  <LocationOnIcon color="primary" className={styles.icon} />
+                  <ListItemText primary={i18n`Centros`} />
+                </MenuItem>
+              )}
               {isAuth && [
                 <MenuItem key="merchandise_01" onClick={() => navigate('/merchandise')}>
                   <ShoppingCartIcon color="primary" className={styles.icon} />
