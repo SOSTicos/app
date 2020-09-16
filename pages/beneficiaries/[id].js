@@ -140,7 +140,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
       await api.beneficiaries.update({ ...data, id: userId })
       notify(i18n`Beneficiario actualizado`, { variant: 'success' })
       backToBeneficiaries()
-    } catch (error) {
+    } catch {
       notify(i18n`No se pudo actualizar el beneficiario`, { variant: 'error' })
     } finally {
       setSubmitting(false)
@@ -164,7 +164,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
       await api.beneficiaries.update({ ...data, id: userId })
       notify(i18n`El paquete esta 'En tránsito'`, { variant: 'success' })
       backToBeneficiaries()
-    } catch (error) {
+    } catch {
       notify(i18n`No se pudo colocar al paquete 'En tránsito'`, { variant: 'error' })
     } finally {
       setSubmitting(false)
@@ -437,8 +437,8 @@ export const getServerSideProps = async (ctx) => {
     const carriersBackend = await api.get(`${host}/api/carriers`, {}, { headers })
 
     // Formats the data to join the name and the phone for the drop down.
-    const carriers = carriersBackend.map((e, i) => {
-      return { _id: e._id, name: e.name + ' - ' + e.phone }
+    const carriers = carriersBackend.map((e) => {
+      return { _id: e._id, name: `${e.name} - ${e.phone}` }
     })
 
     // Pulls the beneficiaries from the endpoint.
