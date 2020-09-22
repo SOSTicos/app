@@ -1,15 +1,13 @@
 const { createError } = require('../../server/lib/utils')
-const readTemplates = require('../../server/lib/template')
+const templates = require('../../server/lib/templates')
 const createApi = require('../../server/api')
 
 const api = createApi()
 
-let templates = null
-
 module.exports = async (request, response) => {
-  if (!templates) {
-    templates = await readTemplates()
-  }
+  // if (!templates) {
+  //   templates = await readTemplates()
+  // }
 
   if (request.method !== 'GET') {
     throw createError('Not found', 404)
