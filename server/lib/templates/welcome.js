@@ -1,4 +1,4 @@
-module.exports = () => `
+module.exports = (data) => `
   <h1>¡Bienvenid@ a <strong>SOS Ticos</strong>!</h1>
   <p>Gracias por suscribirte a SOS Ticos, estamos contentos de tenerte.</p>
   <p>
@@ -6,18 +6,18 @@ module.exports = () => `
     <strong>código de seguridad</strong>:
   </p>
   <p class="expand">
-    <span>${code}</span>
+    <span>${data.code}</span>
   </p>
   <p>Has click en el siguiente botón para confirmar el acceso a tu cuenta:</p>
   <p class="expand">
-    <a class="button" href="${host}/confirm?token=${token}&email=${email}" target="_blank"
+    <a class="button" href="${data.host}/confirm?token=${data.token}&email=${data.email}" target="_blank"
       >CONFIRMAR</a
     >
   </p>
   <p>O copie y pegue en su navegador el siguiente enlace:</p>
   <p>
-    <a href="${host}/confirm?token=${token}&email=${email}" target="_blank"
-      >${host}/confirm?token=${token}&email=${email}</a
+    <a href="${data.host}/confirm?token=${data.token}&email=${data.email}" target="_blank"
+      >${data.host}/confirm?token=${data.token}&email=${data.email}</a
     >
   </p>
   <p>¡Gracias por confiar en SOS Ticos!</p>
