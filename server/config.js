@@ -10,6 +10,7 @@ module.exports = {
   from: process.env.FROM_EMAIL || 'team@sosticos.com',
   superadmin: process.env.SUPERADMIN_EMAIL || 'sosticoscr@gmail.com',
   seed: toBoolean(process.env.SEED) || true,
+  s3Bucket: process.env.S3_BUCKET || 'sosticos.com',
   aws: {
     accessKey: process.env.AWS_ACCESS_TOKEN,
     secretKey: process.env.AWS_SECRET_TOKEN,
