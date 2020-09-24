@@ -1,4 +1,4 @@
-module.exports = (data) => ` <!DOCTYPE html>
+module.exports = () => ` <!DOCTYPE html>
   <html>
     <head>
       <meta charset="utf-8" />
