@@ -1,3 +1,5 @@
+/* globals WEBPACK_SITE_URL */
+
 import parsePhone from 'phone'
 import parseDate from 'date-fns/parse'
 import formatDateFn from 'date-fns/format'
@@ -38,9 +40,7 @@ export const toBoolean = (value) => {
 
 export const getHost = (ctx) => {
   if (ctx) {
-    const { req } = ctx
-    const protocol = req.protocol ? req.protocol : `http`
-    return `${protocol}://${req.headers.host}`
+    return WEBPACK_SITE_URL
   }
 
   const r = window.location.href.match(/^(https?:)?\/\/[^/]+/i)
