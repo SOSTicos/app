@@ -1,27 +1,30 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/zeit/next.js/tree/canary/packages/create-next-app).
 
 ## Requirements
+
 1. NodeJS
 2. MongoDB
 
 ## Setup
+
 1. Clone the repository
-`git clone git@github.com:SOSTicos/app.git`
+   `git clone git@github.com:SOSTicos/app.git`
 
 2. Install node modules
-`npm install`
+   `npm install`
 
 3. Add an `.env` file
 
 4. Add a super admin user at `.env` file with:
-`process.env.SUPERADMIN_EMAIL`
+   `process.env.SUPERADMIN_EMAIL`
 
 5. Execute the app with `npm run dev`
 
 6. Add a "Centro de Acopio" with a super admin.
-    * Open menu icon
-    * Click "Centros"
-    * Fill the form and submit
+
+   - Open menu icon
+   - Click "Centros"
+   - Fill the form and submit
 
 7. Complete the form for a "Voluntario" to add all the required fields for the admin and assign a "Centro de Acopio"
 
@@ -54,11 +57,35 @@ The easiest way to deploy your Next.js app is to use the [ZEIT Now Platform](htt
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+## AWS Serverless deployment
+
+For deployment with the Serverless framework, the _sls-next/serverless-component@1.16.0_ is used in the **serverless.yml** file. It is important that the AWS account have a policy called _sosticosPolicy_ whose initial definition is as follows:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": ["ses:*", "s3:*", "logs:*", "lambda:*"],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+Such policy will give access to the deployed lambda functions that set of permissions in the SES, S3, logs and lambda services. For security, it is advisable to give specific permissions within those services, instead of everything (\*)
+
+Once all configuration is ready, invoking **npx serverless** from the command line will attempt to deploy the project. However, you do not really to do that since that is done by the **circleci** pipeline.
+
 ## Debugging
 
-To enable debugging, use either Node's *--inspect* or *--inspect-brk* arguments. The latter will pause until a debugger is attached. The default debug port is **9299**. Use *--port=<num>* to override. Examples
+To enable debugging, use either Node's _--inspect_ or _--inspect-brk_ arguments. The latter will pause until a debugger is attached. The default debug port is **9299**. Use _--port=<num>_ to override. Examples
+
 ```bash
 $ node --inspect-brk node_modules/next/dist/bin/next
 Debugger listening on ws://127.0.0.1:9229/211d9803-b648-4675-86e9-9fae190482f0
 ```
+
 At this point, you may be able to attach a debugger at port 9299.
