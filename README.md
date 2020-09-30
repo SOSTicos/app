@@ -79,6 +79,21 @@ Such policy will give access to the deployed lambda functions that set of permis
 
 Once all configuration is ready, invoking **npx serverless** from the command line will attempt to deploy the project. However, you do not really to do that since that is done by the **circleci** pipeline.
 
+In order for **serverless** to be able to upload resources, a valid AWS account must be specified. This can be accomplished by specifying the following environment variables:
+
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+
+Those environment variables corresponds to the **AWS_ACCESS_TOKEN** and **AWS_SECRET_TOKEN** respectively. In addition, a directory called **\$HOME/.aws** may contain a file called **credentials** whose content would be as follows
+
+```config
+[default]
+aws_access_key_id=xxx
+aws_secret_access_key=yyy
+```
+
+The UNIX access bit for the file must be **-rw-------**.
+
 ## Debugging
 
 To enable debugging, use either Node's _--inspect_ or _--inspect-brk_ arguments. The latter will pause until a debugger is attached. The default debug port is **9299**. Use _--port=<num>_ to override. Examples

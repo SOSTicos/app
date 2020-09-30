@@ -1,0 +1,12 @@
+{
+  "name": "uk1kwne-ut1dqtk",
+  "arn": "arn:aws:iam::744349764918:role/uk1kwne-ut1dqtk",
+  "service": [
+    "lambda.amazonaws.com",
+    "edgelambda.amazonaws.com"
+  ],
+  "policy": {
+    "arn": "arn:aws:iam::744349764918:policy/devsosticosPolicy"
+  },
+  "region": "us-east-1"
+}

@@ -1,11 +1,8 @@
-service: sosticos
-# app and org for use with dashboard.serverless.com
-app: sosticos-app
-org: rodyce81
+name: prod-sosticos
 
 frameworkVersion: '2'
 
-sosticos-app:
+prod-sosticos-app:
   component: '@sls-next/serverless-component@1.16.0'
   inputs:
     name:
@@ -14,5 +11,5 @@ sosticos-app:
     timeout:
       defaultLambda: 20
       apiLambda: 20
-    bucketName: sosticos
-    policy: 'arn:aws:iam::877750683936:policy/sosticosPolicy'
+    bucketName: prod-sosticos
+    policy: 'arn:aws:iam::744349764918:policy/sosticosPolicy'
