@@ -111,12 +111,14 @@ module.exports = ({ db }) => {
     if ('province' in data && !isProvince(data.province)) throw createError('Provincia inválida')
     if ('canton' in data && !isCanton(data.canton)) throw createError('Cantón inválido')
     if ('district' in data && !isDistrict(data.district)) throw createError('Distrito inválido')
-    if (data.address && !isString(data.necesities)) throw createError('Necesities inválido')
+    if (data.address && !isString(data.necesities))
+      throw createError('Campo de necesidades del beneficiario inválido')
     if (
       data.deliveryStatus > 0 &&
       (data.carrier === null || data.carrier === undefined || data.carrier === '0')
-    )
-      throw createError('No se puede marcar en tránsito sin un transpotista asignado.')
+    ) {
+      throw createError('No se puede poner donativo en tránsito sin un transportista asignado.')
+    }
 
     return true
   }
