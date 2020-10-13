@@ -1,3 +1,5 @@
+/* globals WEBPACK_SITE_URL */
+
 import parsePhone from 'phone'
 
 export const toPhone = (number, code = 'CR') => {
@@ -18,9 +20,7 @@ export const isEmail = (email) => {
 
 export const getHost = (ctx) => {
   if (ctx) {
-    const { req } = ctx
-    const protocol = req.protocol ? req.protocol : `http`
-    return `${protocol}://${req.headers.host}`
+    return WEBPACK_SITE_URL
   }
 
   const r = window.location.href.match(/^(https?:)?\/\/[^/]+/i)

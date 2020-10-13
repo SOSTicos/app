@@ -1,0 +1,6 @@
+{
+  "name": "prod-sosticos",
+  "region": "us-east-1",
+  "accelerated": true,
+  "url": "https://prod-sosticos.s3.amazonaws.com"
+}

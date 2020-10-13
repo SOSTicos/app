@@ -1,0 +1,12 @@
+{
+  "name": "4vnnd55j-kjnolj9",
+  "arn": "arn:aws:iam::744349764918:role/4vnnd55j-kjnolj9",
+  "service": [
+    "lambda.amazonaws.com",
+    "edgelambda.amazonaws.com"
+  ],
+  "policy": {
+    "arn": "arn:aws:iam::744349764918:policy/sosticosPolicy"
+  },
+  "region": "us-east-1"
+}

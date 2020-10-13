@@ -1,0 +1,15 @@
+name: prod-sosticos
+
+frameworkVersion: '2'
+
+prod-sosticos-app:
+  component: '@sls-next/serverless-component@1.16.0'
+  inputs:
+    name:
+      defaultLambda: sosticosDefaultLambda
+      apiLambda: sosticosDefaultLambda
+    timeout:
+      defaultLambda: 20
+      apiLambda: 20
+    bucketName: prod-sosticos
+    policy: 'arn:aws:iam::744349764918:policy/sosticosPolicy'
