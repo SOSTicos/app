@@ -1,6 +1,5 @@
 {
   "components": {
-    "dev-sosticos-app": "/home/rodyce/.serverless/components/registry/npm/@sls-next/serverless-component@1.16.0/node_modules/@sls-next/serverless-component",
-    "prod-sosticos-app": "/home/rodyce/.serverless/components/registry/npm/@sls-next/serverless-component@1.16.0/node_modules/@sls-next/serverless-component"
+    "dev-sosticos-app": "./node_modules/@sls-next/serverless-component"
   }
 }

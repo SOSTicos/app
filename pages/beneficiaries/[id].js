@@ -175,6 +175,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
   const onToggleEdit = () => {
     setEditting((editting) => !editting)
   }
+
   const onToggleEditDelivery = () => {
     setEditDelivery((editDelivery) => !editDelivery)
   }

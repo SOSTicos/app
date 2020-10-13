@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -10,12 +10,12 @@ jobs:
           at: ~/sosticos
       - restore_cache:
           keys:
-            - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - npm-cache-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: Install node packages
-          command: yarn install --ignore-engines
+          command: npm install
       - save_cache:
-          key: yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: npm-cache-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
             - ./.next/cache
@@ -30,13 +30,13 @@ jobs:
           at: ~/sosticos
       - restore_cache:
           keys:
-            - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - npm-cache-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
-          command: yarn
+          command: npm install
       - run:
           name: Run tests
-          command: yarn test
+          command: npm run test
   deploy:
     docker:
       - image: circleci/node:latest
@@ -47,33 +47,53 @@ jobs:
           at: ~/sosticos
       - restore_cache:
           keys:
-            - yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Netlify
-          command: sudo yarn global add netlify-cli
+            - npm-cache-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
-          command: yarn
+          command: npm install
       - run:
           name: Build Files
-          command: yarn build
+          command: npm run build
       - deploy:
-          name: Deploy to Netlify
+          name: Deploy to Amazon Web Services (AWS)
           command: bash scripts/deploy.sh
 
 workflows:
-  version: 2
-  workflow:
+  version: 2.1
+  dev-deploy-sosticos-workflow:
+    when:
+      equal: [ master, << pipeline.git.branch >> ]
     jobs:
-      - build
+      - build:
+          context: dev_context
       - test:
+          context: dev_context
           requires:
             - build
       - deploy:
+          context: dev_context
           requires:
             - test
           filters:
             branches:
               only:
                 - master
+
+  prod-deploy-sosticos-workflow:
+    when:
+      equal: [ production, << pipeline.git.branch >> ]
+    jobs:
+      - build:
+          context: prod_context
+      - test:
+          context: prod_context
+          requires:
+            - build
+      - deploy:
+          context: prod_context
+          requires:
+            - test
+          filters:
+            branches:
+              only:
                 - production

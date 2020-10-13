@@ -2,8 +2,8 @@
   "name": "uk1kwne-j56fo3",
   "arn": "arn:aws:iam::744349764918:role/uk1kwne-j56fo3",
   "service": [
-    "lambda.amazonaws.com",
-    "edgelambda.amazonaws.com"
+    "edgelambda.amazonaws.com",
+    "lambda.amazonaws.com"
   ],
   "policy": {
     "arn": "arn:aws:iam::744349764918:policy/devsosticosPolicy"

@@ -1,10 +1,10 @@
 {
   "name": "dev_sosticosDefaultLambda",
-  "hash": "c7oo4Q02m/Rhu77jH3JxOKMU/8KXdiuaF5N0EP1Ki5E=",
+  "hash": "t+RDMoeYkJg89dEbFdYDNLhM5TnFfH8O+Oc4UYWIwZM=",
   "description": "Default Lambda@Edge for Next CloudFront distribution",
   "memory": 512,
   "timeout": 20,
-  "code": "/home/rodyce/Development/sos-ticos/app/.serverless_nextjs/default-lambda",
+  "code": "/home/circleci/sosticos/.serverless_nextjs/default-lambda",
   "shims": [],
   "handler": "index.handler",
   "runtime": "nodejs12.x",
