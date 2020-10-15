@@ -6,6 +6,7 @@ const { createError } = require('../utils')
 module.exports = (options) => {
   const { aws } = options
   const { accessKey, secretKey, region } = aws
+  const { s3Bucket } = options
 
   const s3 = new AWS.S3({
     region,
@@ -42,9 +43,8 @@ module.exports = (options) => {
   }
 
   async function thumbnail(key) {
-    // TODO: Define bucket name
     const params = {
-      Bucket: 'rodyce.sos.ticos',
+      Bucket: s3Bucket,
       Key: key,
     }
     return s3.getObject(params)
@@ -61,9 +61,8 @@ module.exports = (options) => {
 
       const imgBlob = Buffer.from(imgB64, 'base64')
 
-      // TODO: Specify final bucket name
       return {
-        Bucket: 'rodyce.sos.ticos',
+        Bucket: s3Bucket,
         Body: imgBlob,
         ContentType: contentType,
         Key: key,

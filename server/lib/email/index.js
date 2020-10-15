@@ -3,11 +3,10 @@
 const { htmlToText } = require('nodemailer-html-to-text')
 const { createTransport } = require('nodemailer')
 const AWS = require('aws-sdk')
+const { isString } = require('lodash')
 const { createError } = require('../utils')
-const readTemplates = require('../template')
+const templates = require('../templates')
 const getMetadata = require('./metadata')
-
-let templates = null
 
 module.exports = (options) => {
   const { host, site, aws } = options
@@ -24,15 +23,15 @@ module.exports = (options) => {
   client.use('compile', htmlToText())
 
   const send = async (data) => {
-    if (!templates) {
-      templates = await readTemplates()
-    }
+    // if (!templates) {
+    //   templates = await readTemplates()
+    // }
 
     let { to, attachments = [] } = data
 
     to = to || data.email
 
-    if (typeof data.template !== 'string') {
+    if (!isString(data.template)) {
       throw createError('Invalid template.')
     }
 
