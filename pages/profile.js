@@ -40,21 +40,19 @@ const Profile = ({ user, centers = [] }) => {
   const api = useApi()
   const { enqueueSnackbar: notify } = useSnackbar()
 
-  const { watch, control, handleSubmit, errors } = useForm({
+  const { control, handleSubmit, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
       role: user?.role || '',
       name: user?.name || '',
       email: user?.email || '',
+      docId: user?.docId || '',
       phone: user?.phone || '',
       center: user?.centerId ? find(centers, { _id: user?.centerId })?.name || '' : '',
     },
   })
 
   const center = find(centers, { _id: user?.centerId }) || {}
-  // const center = user?.centerId ? find(centers, { _id: user?.centerId })? || '' : ''
-
-  const { docId } = watch()
 
   useEffect(() => {
     if (!user) router.replace('/signin')
@@ -63,6 +61,8 @@ const Profile = ({ user, centers = [] }) => {
   const normalize = (data) => {
     return {
       name: data.name,
+      docId: data.docId,
+      phone: data.phone,
     }
   }
 
@@ -71,6 +71,8 @@ const Profile = ({ user, centers = [] }) => {
       setSubmitting(true)
       await api.me.update(normalize(data))
       notify(i18n`Perfil actualizado`, { variant: 'success' })
+      setSubmitting(true)
+      location.reload()
     } catch (error) {
       console.log(error)
       notify(i18n`No se pudo actualizar su perfil`, { variant: 'error' })
@@ -125,15 +127,22 @@ const Profile = ({ user, centers = [] }) => {
             error={Boolean(errors.name)}
             errorText={errors.name && errors.name.message}
           />
-          {docId && (
-            <Input
-              name="docId"
-              control={control}
-              label={i18n`Cédula`}
-              error={Boolean(errors.docId)}
-              errorText={errors.docId && errors.docId.message}
-            />
-          )}
+
+          <Input
+            name="docId"
+            control={control}
+            label={i18n`Cédula`}
+            error={Boolean(errors.docId)}
+            errorText={errors.docId && errors.docId.message}
+          />
+
+          <Input
+            name="phone"
+            control={control}
+            label={i18n`Teléfono`}
+            error={Boolean(errors.docId)}
+            errorText={errors.docId && errors.docId.message}
+          />
 
           <Input disabled name="role" control={control} label={i18n`Rol`} />
 

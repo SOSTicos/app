@@ -9,7 +9,7 @@ const fetch = ({ user, query }) => {
 }
 
 const update = ({ user, body, query }) => {
-  return api.beneficiaries.update({ ...body, ...query, user })
+  return api.beneficiaries.update({ ...body, ...query, user }, api.fileStorage)
 }
 
 const destroy = ({ user, query }) => {

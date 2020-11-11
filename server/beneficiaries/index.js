@@ -1,5 +1,6 @@
+const { v4: uuid } = require('uuid')
 const isEmail = require('is-email')
-const { pick, isString } = require('lodash')
+const { isString } = require('lodash')
 const { createError } = require('../lib/utils')
 const { isProvince, isCanton, isDistrict } = require('../../shared/lib/locations')
 const { toPhone } = require('../../shared/lib/utils')
@@ -19,6 +20,8 @@ module.exports = ({ db }) => {
     'status',
     'deliveryStatus',
     'carrier',
+    'photo',
+    'thumbnail',
   ]
 
   const setIndexes = async () => {
@@ -32,15 +35,13 @@ module.exports = ({ db }) => {
       centerId: data.centerId,
       name: data.name,
       phone: data.phone ? toPhone(data.phone) : null,
-      email: data.email.toLowerCase(),
+      email: data.email?.toLowerCase(),
       address: data.address,
       province: data.province,
       canton: data.canton,
       necesities: data.necesities,
       district: data.district,
       status: data.status,
-      carrier: data.carrier ? data.carrier : '0',
-      deliveryStatus: data.deliveryStatus ? data.deliveryStatus : 0,
       updatedAt: data.updateAt || Date.now(),
       createdAt: data.createdAt || Date.now(),
     }
@@ -61,35 +62,92 @@ module.exports = ({ db }) => {
 
     if (await beneficiaries.findOne({ docId: data.docId }))
       throw createError('Este beneficiario ya existe')
-    await validateBeneficiary(data, beneficiaries)
+    await validateBeneficiary(data)
 
     data = normalize(data)
     return beneficiaries.insertOne(data)
   }
 
-  const update = async ({ user, id, userId, ...data }) => {
+  const update = async ({ user, id, userId, ...data }, api) => {
     user.can('update', 'beneficiary', { beneficiaryId: id })
     const beneficiaries = await db.get('beneficiaries')
 
-    data = pick(data, fields)
+    let updateData = {}
+    if (data.deliveryStatus === '2') {
+      // Upload the fotos.
+      if (
+        data.photo === null ||
+        data.photo === undefined ||
+        data.thumbnail === null ||
+        data.thumbnail === undefined
+      )
+        throw createError('No se puede poner donativo como entregado sin una foto de la entrega.')
 
-    await validateBeneficiary(data, beneficiaries)
+      let uploadedPhotoKey = null
+      let uploadedThumbnailKey = null
+      try {
+        // name and upload files.
+        const photoName = `deliveries/photo_${uuid()}`
+        const thumbnailName = `${photoName}_thumbnail`
+        uploadedPhotoKey = await api.upload(photoName, data.photo)
+        uploadedThumbnailKey = await api.upload(thumbnailName, data.thumbnail)
+      } catch (error) {
+        throw createError('No se pudo cargar la foto y thumbnail. Error: ' + error)
+      }
 
-    if (data.email) {
-      data.email = data.email.toLowerCase()
+      if (
+        uploadedPhotoKey === null ||
+        uploadedPhotoKey === undefined ||
+        uploadedThumbnailKey === null ||
+        uploadedThumbnailKey === undefined
+      )
+        throw createError('Error al cargar la foto.')
+
+      // Merge the photo IDs data with the new delivery data.
+      updateData = mergeWithDelivery(data, uploadedPhotoKey, uploadedThumbnailKey, user)
+    } else if (data.deliveryStatus === '3') {
+      updateData = normalizeForCancelDelivery(data, user)
+    } else {
+      if (data.email) {
+        data.email = data.email?.toLowerCase()
+      }
+
+      if (data.phone) {
+        data.phone = toPhone(data.phone)
+      }
+
+      await validateBeneficiary(data)
+      updateData = normalize(data)
     }
 
-    if (data.phone) {
-      data.phone = toPhone(data.phone)
-    }
+    return beneficiaries.updateById(id, updateData)
+  }
 
-    if (userId) {
-      data.userId = userId
-    }
+  const normalizeForCancelDelivery = (data, user) => {
+    const beneficiaryData = {}
+    beneficiaryData.deliveredBy = user._id
+    beneficiaryData.deliveryStatus = '3'
+    beneficiaryData.updatedAt = data.updateAt || Date.now()
+    return beneficiaryData
+  }
 
-    data.updatedAt = Date.now()
+  const mergeWithDelivery = (data, uploadedPhotoKey, uploadedThumbnailKey, user) => {
+    const beneficiaryData = {}
 
-    return beneficiaries.updateById(id, data)
+    if (
+      uploadedPhotoKey !== null &&
+      uploadedPhotoKey !== undefined &&
+      uploadedThumbnailKey !== null &&
+      uploadedThumbnailKey !== undefined
+    ) {
+      beneficiaryData.photo = uploadedPhotoKey
+      beneficiaryData.thumbnail = uploadedThumbnailKey
+      beneficiaryData.deliveredBy = user._id
+      beneficiaryData.deliveryStatus = '2'
+      beneficiaryData.updatedAt = data.updateAt || Date.now()
+    } else throw createError('La foto y thumbnail no pueden estar vacillos.')
+
+    return beneficiaryData
   }
 
   const destroy = async ({ user, id }) => {
@@ -113,12 +171,6 @@ module.exports = ({ db }) => {
     if ('district' in data && !isDistrict(data.district)) throw createError('Distrito inválido')
     if (data.address && !isString(data.necesities))
       throw createError('Campo de necesidades del beneficiario inválido')
-    if (
-      data.deliveryStatus > 0 &&
-      (data.carrier === null || data.carrier === undefined || data.carrier === '0')
-    ) {
-      throw createError('No se puede poner donativo en tránsito sin un transportista asignado.')
-    }
 
     return true
   }

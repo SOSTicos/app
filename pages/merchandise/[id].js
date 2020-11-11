@@ -51,6 +51,7 @@ const MerchandiseDetail = ({ user, data, photoUrl }) => {
     if (dt < 10) {
       dt = '0' + dt
     }
+
     if (month < 10) {
       month = '0' + month
     }

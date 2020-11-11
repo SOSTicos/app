@@ -121,7 +121,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
         address: data.address,
         necesities: data.necesities,
         status: data.status,
-        deliveryStatus: data.deliveryStatus ? data.deliveryStatus : 0,
+        deliveryStatus: data.deliveryStatus ? data.deliveryStatus : '0',
         carrier: data.carrier ? data.carrier : '0',
       },
       isNil
@@ -155,7 +155,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
 
       // Apply UPDATE: Assgining the carrier Id from the one selected in the drop down. Set status to 1.
       data.carrier = carrierData?.carrier._id
-      data.deliveryStatus = 1
+      data.deliveryStatus = '1'
 
       // Nomalizing data so that it won't fail on update save.
       data = normalize(data)
@@ -175,6 +175,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
   const onToggleEdit = () => {
     setEditting((editting) => !editting)
   }
+
   const onToggleEditDelivery = () => {
     setEditDelivery((editDelivery) => !editDelivery)
   }

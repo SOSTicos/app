@@ -126,6 +126,13 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
               </MenuItem>
               <Divider />
               {isAuth && canManageCenters && (
+                <MenuItem key="deliveries_01" onClick={() => navigate('/deliveries')}>
+                  <PeopleAlt color="primary" className={styles.icon} />
+                  <ListItemText primary={i18n`Mis Entregas`} />
+                </MenuItem>
+              )}
+              <Divider />
+              {isAuth && canManageCenters && (
                 <MenuItem key="centers_01" onClick={() => navigate('/centers')}>
                   <LocationOnIcon color="primary" className={styles.icon} />
                   <ListItemText primary={i18n`Centros`} />
