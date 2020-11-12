@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isEmpty, find, isNil, omitBy } from 'lodash'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
@@ -6,29 +6,18 @@ import { useForm } from 'react-hook-form'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
-import FormGroup from '@material-ui/core/FormGroup'
-import EditIcon from '@material-ui/icons/Edit'
-import CameraIcon from '@material-ui/icons/Camera'
 import CancelIcon from '@material-ui/icons/Cancel'
-import ClearIcon from '@material-ui/icons/Clear'
 import Typography from '@material-ui/core/Typography'
 import Layout from '../../client/components/layout'
-import Autocomplete from '../../client/components/autocomplete'
 import Button from '../../client/components/button'
-import Input from '../../client/components/input'
 import Line from '../../client/components/line'
-import Select from '../../client/components/select'
-import Tab from '@material-ui/core/Tab'
-import Tabs from '@material-ui/core/Tabs'
 import { getSession, getHeaders } from '../../client/lib/auth'
 import { getHost } from '../../client/lib/utils'
 import useApi from '../../client/hooks/api'
 import * as api from '../../client/lib/api'
 import i18n from '../../shared/lib/i18n'
-import { isPhone, toPhone } from '../../shared/lib/utils'
 import { provincias, cantones, distritos, all } from '../../shared/lib/locations'
 import { estados } from '../../shared/lib/statuses'
-import deliveryStatuses from '../../shared/lib/delivery-statuses'
 import ImageSelector from '../../client/components/imageselector'
 
 // Constants for dealing with the size of images. These are in pixel units.
@@ -57,12 +46,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const DeliveryDetail = ({ user, data, centers = [], carriers = [] }) => {
+const DeliveryDetail = ({ user, data, centers = [] }) => {
   const [submitting, setSubmitting] = useState(false)
-  const [editting, setEditting] = useState(false)
-  const [editDelivery, setEditDelivery] = useState(false)
   const [isPhotoSelected, setPhotoSelected] = useState(false)
-  const [tabVal, setTabVal] = useState(0)
   const [photo, setPhoto] = useState('')
   const [thumbnail, setThumbnail] = useState('')
   const router = useRouter()
@@ -71,7 +57,7 @@ const DeliveryDetail = ({ user, data, centers = [], carriers = [] }) => {
   const userId = data._id
   const { enqueueSnackbar: notify } = useSnackbar()
 
-  const { setValue, watch, control, handleSubmit, reset, errors } = useForm({
+  const { setValue, watch, handleSubmit, reset, errors } = useForm({
     mode: 'onChange',
     defaultValues: {
       deliveryStatus: data.deliveryStatus ? data.deliveryStatus : 0,
@@ -81,7 +67,6 @@ const DeliveryDetail = ({ user, data, centers = [], carriers = [] }) => {
   })
 
   const center = find(centers, { _id: data?.centerId }) || {}
-  const carrier = find(carriers, { _id: data?.carrier }) || {}
   const { province, canton, district } = watch()
   const provinces = Object.keys(all)
   const cantons = province ? Object.keys(all[province] || {}) : []
@@ -109,23 +94,12 @@ const DeliveryDetail = ({ user, data, centers = [], carriers = [] }) => {
     }
   }, [districts, district])
 
-  const normalize = (data) => {
-    return omitBy(
-      {
-        deliveryStatus: data.deliveryStatus ? data.deliveryStatus : '0',
-        photo: data.photo,
-        thumbnail: data.thumbnail,
-      },
-      isNil
-    )
-  }
-
   function backToDeliveries() {
     router.replace('/deliveries')
   }
 
   // Function called when submitting an updated beneficiary
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
     try {
       if (!isPhotoSelected) {
         notify(i18n`No ha seleccionado la foto del donativo`, { variant: 'error' })
@@ -135,15 +109,15 @@ const DeliveryDetail = ({ user, data, centers = [], carriers = [] }) => {
       setSubmitting(true)
 
       // Apply UPDATE: Assgining the carrier Id from the one selected in the drop down. Set status to 1.
-      let updateData = {
+      const updateData = {
         deliveryStatus: '2',
-        photo: photo,
-        thumbnail: thumbnail,
+        photo,
+        thumbnail,
       }
 
       console.log('data frontend', updateData)
 
-      //Requesting update from the API.
+      // Requesting update from the API.
       await api.beneficiaries.update({ ...updateData, id: userId })
       notify(i18n`Paquete marcado como 'ENTREGADO'`, { variant: 'success' })
       backToDeliveries()
@@ -158,7 +132,7 @@ const DeliveryDetail = ({ user, data, centers = [], carriers = [] }) => {
   }
 
   // Function called when submitting an updated beneficiary
-  const onCancel = async (carrierData) => {
+  const onCancel = async () => {
     try {
       setSubmitting(true)
 
@@ -201,7 +175,7 @@ const DeliveryDetail = ({ user, data, centers = [], carriers = [] }) => {
         {i18n`Entrega a Beneficiario`}
       </Typography>
 
-      <div style={{ display: tabVal === 0 ? '' : 'none' }}>
+      <div>
         <Box display="flex" justifyContent="flex-end">
           <Button
             size="small"
