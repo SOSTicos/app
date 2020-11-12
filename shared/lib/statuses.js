@@ -1,5 +1,5 @@
 // Note: Do NOT modify this array! Order sensitive!
-export const estados = ['Pendiente', 'Rechazado', 'Aceptado', 'Crítico']
+export const estados = ['Pendiente', 'Rechazado', 'Aceptado', 'Crítico', 'Finalizado']
 
 export default estados
 

@@ -121,7 +121,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
         address: data.address,
         necesities: data.necesities,
         status: data.status,
-        deliveryStatus: data.deliveryStatus ? data.deliveryStatus : 0,
+        deliveryStatus: data.deliveryStatus ? data.deliveryStatus : '0',
         carrier: data.carrier ? data.carrier : '0',
       },
       isNil
@@ -154,11 +154,10 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
       setSubmitting(true)
 
       // Apply UPDATE: Assgining the carrier Id from the one selected in the drop down. Set status to 1.
-      data.carrier = carrierData?.carrier._id
-      data.deliveryStatus = 1
-
-      // Nomalizing data so that it won't fail on update save.
-      data = normalize(data)
+      const data = {
+        carrier: carrierData?.carrier._id,
+        deliveryStatus: '1',
+      }
 
       // Requesting update from the API.
       await api.beneficiaries.update({ ...data, id: userId })
@@ -198,7 +197,13 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
         centered
       >
         <Tab label="Datos generales" />
-        <Tab label="Estado de entrega" />
+        {data.status >= 2 ? (
+          <Tab label="Estado de entrega" />
+        ) : (
+          <p style={{ cursor: 'none', pointerEvents: 'none' }} disabled={'true'}>
+            <Tab label="Estado de entrega" />
+          </p>
+        )}
       </Tabs>
 
       <div style={{ display: tabVal === 0 ? '' : 'none' }}>
