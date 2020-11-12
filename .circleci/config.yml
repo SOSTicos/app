@@ -63,7 +63,7 @@ workflows:
   version: 2.1
   deploy-less-sosticos-workflow:
     # Activate this workflow when the target branch is neither
-    # master nor production.
+    # 'master' nor 'production'.
     when:
       not:
         or:
@@ -71,11 +71,11 @@ workflows:
           - equal: [ production, << pipeline.git.branch >> ]
     jobs:
       - build:
-        context: dev_context
+          context: dev_context
       - test:
-        context: dev_context
-        requires:
-          - build
+          context: dev_context
+          requires:
+            - build
 
   dev-deploy-sosticos-workflow:
     when:
