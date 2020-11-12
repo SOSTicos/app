@@ -3,7 +3,7 @@ name: dev-sosticos
 frameworkVersion: '2'
 
 dev-sosticos-app:
-  component: '@sls-next/serverless-component@1.17.0'
+  component: '@sls-next/serverless-component@1.18.0'
   inputs:
     name:
       defaultLambda: dev_sosticosDefaultLambda
