@@ -41,7 +41,7 @@ module.exports = ({ db }) => {
       canton: data.canton,
       necesities: data.necesities,
       district: data.district,
-      status: data.status,
+      status: data.status ? data.status : '0',
       updatedAt: data.updateAt || Date.now(),
       createdAt: data.createdAt || Date.now(),
     }
@@ -107,6 +107,10 @@ module.exports = ({ db }) => {
       updateData = mergeWithDelivery(data, uploadedPhotoKey, uploadedThumbnailKey, user)
     } else if (data.deliveryStatus === '3') {
       updateData = normalizeForCancelDelivery(data, user)
+    } else if (data.deliveryStatus === '1') {
+      if (!data.carrier) throw createError('El carrier no puede esta vacio.')
+
+      updateData = data
     } else {
       if (data.email) {
         data.email = data.email?.toLowerCase()
@@ -127,6 +131,7 @@ module.exports = ({ db }) => {
     const beneficiaryData = {}
     beneficiaryData.deliveredBy = user._id
     beneficiaryData.deliveryStatus = '3'
+    beneficiaryData.status = '4'
     beneficiaryData.updatedAt = data.updateAt || Date.now()
     return beneficiaryData
   }
@@ -144,6 +149,7 @@ module.exports = ({ db }) => {
       beneficiaryData.thumbnail = uploadedThumbnailKey
       beneficiaryData.deliveredBy = user._id
       beneficiaryData.deliveryStatus = '2'
+      beneficiaryData.status = '4'
       beneficiaryData.updatedAt = data.updateAt || Date.now()
     } else throw createError('La foto y thumbnail no pueden estar vacillos.')
 

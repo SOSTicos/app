@@ -135,10 +135,22 @@ export const getServerSideProps = async (ctx) => {
   const headers = getHeaders(ctx)
   const host = getHost(ctx)
 
+  // CCreate container to hold the beneficiaries.
+  let beneficiariesPending = []
+  let beneficiariesApproved = []
+  let beneficiariesCritical = []
   let beneficiaries = []
-
   try {
-    beneficiaries = session.user ? await api.get(`${host}/api/beneficiaries`, {}, { headers }) : []
+    beneficiariesPending = session.user
+      ? await api.get(`${host}/api/beneficiaries`, { status: '0' }, { headers })
+      : []
+    beneficiariesApproved = session.user
+      ? await api.get(`${host}/api/beneficiaries`, { status: '2' }, { headers })
+      : []
+    beneficiariesCritical = session.user
+      ? await api.get(`${host}/api/beneficiaries`, { status: '3' }, { headers })
+      : []
+    beneficiaries = beneficiariesCritical.concat(beneficiariesPending).concat(beneficiariesApproved)
     beneficiaries = beneficiaries.map((b) => {
       return {
         ...b,
