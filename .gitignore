@@ -28,13 +28,9 @@ yarn-error.log*
 .secrets
 .vercel
 
-
 /out_publish/
 /out_functions/
 /404.html
-
-# Local Netlify folder
-.netlify
 
 # Serverless-related
 .serverless
