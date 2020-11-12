@@ -13,6 +13,7 @@ const NextComposed = forwardRef((props, ref) => {
     </NextLink>
   )
 })
+NextComposed.displayName = 'NextComposed'
 
 // A styled version of the Next.js Link component:
 // https://nextjs.org/docs/#with-link
@@ -29,7 +30,7 @@ function Link(props) {
   const router = useRouter()
   const pathname = typeof href === 'string' ? href : href.pathname
   const className = clsx(classNameProps, {
-    [activeClassName]: router.pathname === pathname && activeClassName
+    [activeClassName]: router.pathname === pathname && activeClassName,
   })
 
   if (naked) {
@@ -41,4 +42,7 @@ function Link(props) {
   )
 }
 
-export default forwardRef((props, ref) => <Link {...props} innerRef={ref} />)
+const ButtonLink = forwardRef((props, ref) => <Link {...props} innerRef={ref} />)
+ButtonLink.displayName = 'displayName'
+
+export default ButtonLink

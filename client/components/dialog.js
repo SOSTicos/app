@@ -12,6 +12,7 @@ import i18n from '../lib/i18n'
 const Transition = forwardRef((props, ref) => {
   return <Slide direction="up" ref={ref} {...props} />
 })
+Transition.displayName = 'Transition'
 
 const useStyles = makeStyles({
   avatar: {},
