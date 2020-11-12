@@ -56,7 +56,7 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
   const router = useRouter()
   const styles = useStyles()
   const [keyword, setKeyword] = useState()
-  const tabVal = 0
+  const tabVal = 1
 
   useEffect(() => {
     if (!user) router.replace('/signin')
@@ -105,7 +105,7 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
   }
 
   const handleTabChange = () => {
-    router.replace('/beneficiaries/finalizados')
+    router.replace('/beneficiaries')
   }
 
   return (
@@ -153,21 +153,11 @@ export const getServerSideProps = async (ctx) => {
   const host = getHost(ctx)
 
   // Create container to hold the beneficiaries.
-  let beneficiariesPending = []
-  let beneficiariesApproved = []
-  let beneficiariesCritical = []
   let beneficiaries = []
   try {
-    beneficiariesPending = session.user
-      ? await api.get(`${host}/api/beneficiaries`, { status: '0' }, { headers })
+    beneficiaries = session.user
+      ? await api.get(`${host}/api/beneficiaries`, { status: '4' }, { headers })
       : []
-    beneficiariesApproved = session.user
-      ? await api.get(`${host}/api/beneficiaries`, { status: '2' }, { headers })
-      : []
-    beneficiariesCritical = session.user
-      ? await api.get(`${host}/api/beneficiaries`, { status: '3' }, { headers })
-      : []
-    beneficiaries = beneficiariesCritical.concat(beneficiariesPending).concat(beneficiariesApproved)
     beneficiaries = beneficiaries.map((b) => {
       return {
         ...b,

@@ -128,7 +128,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
     )
   }
 
-  function backToBeneficiaries() {
+  const backToBeneficiaries = () => {
     router.replace('/beneficiaries')
   }
 
@@ -197,7 +197,7 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
         centered
       >
         <Tab label="Datos generales" />
-        {data.status >= 2 ? (
+        {data.status >= 2 && data.status < 4 ? (
           <Tab label="Estado de entrega" />
         ) : (
           <p style={{ cursor: 'none', pointerEvents: 'none' }} disabled={'true'}>
@@ -217,10 +217,13 @@ const BeneficiaryDetail = ({ user, data, centers = [], carriers = [] }) => {
           >
             {editting ? (
               <ClearIcon className={styles.icon} />
-            ) : (
+            ) : data.status < 4 ? (
               <EditIcon className={styles.icon} />
+            ) : (
+              ''
             )}
-            {editting ? i18n`Cancelar` : i18n`Editar`}
+
+            {editting ? i18n`Cancelar` : data.status < 4 ? i18n`Editar` : ''}
           </Button>
         </Box>
         {editting ? (
