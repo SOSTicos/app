@@ -69,10 +69,6 @@ const VolunteerList = ({ user, users = [] }) => {
 
   const renderItem = (item) => {
     const role = ROLES[item.role]
-    // const location =
-    //   (item?.province || '') + ' ' + (item?.canton || '') + ' ' + (item?.district || '')
-
-    console.log(item)
 
     return (
       <Paper key={item._id} style={{ marginBottom: 16 }}>
@@ -146,7 +142,6 @@ export const getServerSideProps = async (ctx) => {
     users = session.user ? await api.get(`${host}/api/users`, {}, { headers }) : []
   } catch (_) {}
 
-  // console.log('users', session, users)
   return { props: { ...session, users } }
 }
 

@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
 
 const Signin = () => {
   const { enqueueSnackbar: notify } = useSnackbar()
-  const { isAuth, code, verifying, expired, signin, cancel, ...state } = useApi()
+  const { isAuth, code, verifying, expired, signin, cancel } = useApi()
   const [email, setEmail] = useState('')
   const router = useRouter()
   const styles = useStyles()
@@ -34,7 +34,6 @@ const Signin = () => {
   }, [isAuth])
 
   const onSubmit = async () => {
-    console.log(email)
     try {
       await signin(email)
     } catch (error) {
@@ -46,8 +45,6 @@ const Signin = () => {
   const onChange = (event) => {
     setEmail(event.target.value)
   }
-
-  console.log(state)
 
   return (
     <Layout noAppbar mx={4} my={10}>
