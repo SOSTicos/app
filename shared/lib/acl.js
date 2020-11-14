@@ -15,11 +15,13 @@ const permissions = {
   },
   carrier({ _id }, { can }) {
     can('update', 'user', { _id })
+    can('read', 'user', { _id })
     can('read', 'center')
   },
   coordinator({ centerId }, { can }) {
     can('read', 'center')
     can('read', 'merchandise')
+    can('read', 'user')
     can('create', 'merchandise')
     can('manage', 'all', { centerId })
   },
