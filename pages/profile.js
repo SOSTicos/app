@@ -80,6 +80,10 @@ const Profile = ({ user, centers = [] }) => {
     }
   }
 
+  const testSnack = () => {
+    notify(`Mensaje de ejemplo dismiss`, { variant: 'success' })
+  }
+
   const onExit = async () => {
     tokens.del()
     await sleep(1000)
@@ -164,6 +168,9 @@ const Profile = ({ user, centers = [] }) => {
           <Line label={i18n`Teléfono`} value={user.phone} />
           <Line label={i18n`Rol`} value={user.role} />
           <Line label={i18n`Centro de acopio`} value={center.name} />
+          <Button variant="outlined" color="secondary" onClick={testSnack}>
+            mostrar snack
+          </Button>
         </Paper>
       )}
       <Button variant="outlined" color="secondary" onClick={onExit}>

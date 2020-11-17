@@ -9,6 +9,7 @@ import Provider from '../client/components/provider'
 import * as analytics from '../client/lib/analytics'
 import theme from '../client/theme'
 import '../client/style.css'
+import Button from '../client/components/button'
 
 export default class MyApp extends App {
   componentDidMount() {
@@ -31,6 +32,12 @@ export default class MyApp extends App {
 
   render() {
     const { Component, pageProps } = this.props
+
+    // add dismiss action to all snackbars
+    const notistackRef = React.createRef()
+    const onClickDismiss = (key) => () => {
+      notistackRef.current.closeSnackbar(key)
+    }
 
     return (
       <Fragment>
@@ -59,7 +66,11 @@ export default class MyApp extends App {
           </Head>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'left' }}>
+            <SnackbarProvider
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              ref={notistackRef}
+              action={(key) => <Button onClick={onClickDismiss(key)}>Dismiss</Button>}
+            >
               <Component {...pageProps} />
             </SnackbarProvider>
           </ThemeProvider>
