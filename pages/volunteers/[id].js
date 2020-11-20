@@ -76,8 +76,6 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
     },
   })
 
-  console.log('ALL', all)
-
   const center = data?.centerId ? find(centers, { _id: data?.centerId }) : {}
   const { province, canton, district } = watch()
   const provinces = Object.keys(all)

@@ -101,12 +101,17 @@ module.exports = ({ db, secret, signInTokenTTL, accessTokenTTL }) => {
     email = email.toLowerCase()
     const doc = await tokens.findOne({ _id: token, uid: email })
 
-    if (!doc) throw createError('Token de verificación inválido', 401)
-    else if (!doc.confirmed) throw createError('Verificación incompleta', 403)
+    if (!doc) {
+      throw createError('Token de verificación inválido', 401)
+    } else if (!doc.confirmed) {
+      throw createError('Esperando verificación del usuario', 403)
+    }
 
     let user = await users.findOne({ email })
 
-    if (!user) throw createError('Usuario inválido')
+    if (!user) {
+      throw createError('Usuario inválido')
+    }
 
     await tokens.deleteById(doc._id)
 
