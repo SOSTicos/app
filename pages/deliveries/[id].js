@@ -201,6 +201,10 @@ const DeliveryDetail = ({ user, data, centers = [] }) => {
           <Line label={i18n`Necesidades`} value={data.necesities} />
           <Line label={i18n`Estado`} value={estados[data.status]} />
         </Paper>
+        <Line
+          label={i18n`INSTRUCCIÓN`}
+          value={`Tomar una foto de frente de un documento de identidad de la persona beneficiaria.`}
+        />
         <ImageSelector
           imgTargetWidth={IMG_TARGET_WIDTH}
           thumbnailTargetWidth={THUMBNAIL_TARGET_WIDTH}
@@ -226,8 +230,12 @@ const DeliveryDetail = ({ user, data, centers = [] }) => {
           </>
         ) : (
           <>
+            <Line
+              label={i18n`ADVERTENCIA`}
+              value={`Este boton elimina PERMANENTEMENTE al beneficiario y la entrega.`}
+            />
             <Button variant="outlined" color="secondary" onClick={onCancel}>
-              {i18n`Eliminar Entrega`}
+              {i18n`Eliminar Beneficiario y Cancelar Entrega`}
             </Button>
           </>
         )}

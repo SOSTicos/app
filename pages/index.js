@@ -28,7 +28,7 @@ const Home = ({ user }) => {
         <img style={{ width: 180 }} src="/logo.png" alt="Logo SOS Ticos" />
       </Typography>
       <Typography variant="h5" gutterBottom align="center">
-        Inicio
+        Inicio - V 0.1
       </Typography>
       {componentForRegister}
     </Layout>
