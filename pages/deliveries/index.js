@@ -38,6 +38,7 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
   }, [user])
 
   const data = beneficiaries
+  console.log('data in deliveries', data)
 
   const renderItem = (item) => {
     const location =
@@ -99,9 +100,16 @@ export const getServerSideProps = async (ctx) => {
 
   let beneficiaries = []
 
-  const deliveryQuery = {
+  let deliveryQuery = {
     carrier: session.user._id,
     deliveryStatus: '1',
+  }
+
+  if (session.user && session.user.role === 'coordinator') {
+    deliveryQuery = {
+      ...deliveryQuery,
+      centerId: session.user.centerId,
+    }
   }
 
   try {

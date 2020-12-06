@@ -50,7 +50,26 @@ module.exports = ({ db }) => {
   const fetch = async ({ user, id, ...query }) => {
     user.can('read', 'beneficiary', { _id: id })
     const beneficiaries = await db.get('beneficiaries')
-    const res = id ? await beneficiaries.findById(id) : await beneficiaries.findMany(query)
+    let res = false
+    if (id) {
+      res = await beneficiaries.findById(id)
+    } else {
+      let dbQuery = {}
+      if (query.centerId) {
+        const { deliveryStatus, centerId, carrier } = query
+        dbQuery = {
+          $or: [
+            { deliveryStatus, carrier },
+            { deliveryStatus, centerId },
+          ],
+        }
+      } else {
+        dbQuery = query
+      }
+
+      res = await beneficiaries.findMany(dbQuery)
+    }
+
     if (!res) throw createError('No se encontró el beneficiario', 404)
     return res
   }
