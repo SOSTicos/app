@@ -70,7 +70,6 @@ const createRules = (user) => {
  */
 
 const cast = (data) => {
-  console.log('cast data', data)
   if (!data || !isObject(data)) return
 
   if (data._id) {
@@ -97,7 +96,6 @@ const createACL = (user) => {
 
   const can = (action, resource, data = {}, error = true) => {
     const ok = ability.can(action, subject(resource, cast(data)))
-    console.log('user trying to:', action, resource, data, ok, error)
     if (error && !ok) throw createError('Permisos insuficientes', 403)
     return ok
   }

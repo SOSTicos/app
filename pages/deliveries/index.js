@@ -40,7 +40,6 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
   const isAdmin = ['superadmin', 'admin'].includes(user.role)
 
   const data = beneficiaries
-  console.log('data in deliveries', data)
 
   const renderItem = (item) => {
     const location =
