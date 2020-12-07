@@ -131,16 +131,12 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 <ListItemText primary={i18n`Registrar`} />
               </MenuItem>
               <Divider />
-              {isAuth && isAdmin && (
-                <MenuItem key="deliveries_01" onClick={() => navigate('/deliveries')}>
-                  <PeopleAlt color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Todas las Entregas`} />
-                </MenuItem>
-              )}
               {isAuth && canSeeDeliveries && (
                 <MenuItem key="deliveries_01" onClick={() => navigate('/deliveries')}>
                   <PeopleAlt color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Mis Entregas`} />
+                  <ListItemText
+                    primary={i18n`${isAdmin ? 'Todas las Entregas' : 'Mis Entregas'}`}
+                  />
                 </MenuItem>
               )}
               <Divider />

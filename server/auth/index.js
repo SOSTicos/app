@@ -74,6 +74,11 @@ module.exports = ({ db, secret, signInTokenTTL, accessTokenTTL }) => {
     if (!doc) throw createError('Token de confirmación inválido', 401)
     else if (doc.confirmed) throw createError('El token ya no es válido', 401)
 
+    const tokenTTL = new Date(doc.ttl).getTime()
+    if (Date.now() > tokenTTL) {
+      throw createError('El token ya no es válido', 401)
+    }
+
     await tokens.updateById(doc._id, { confirmed: true })
 
     return doc
