@@ -23,10 +23,10 @@ const permissions = {
     can('update', 'beneficiary', { carrier })
   },
   coordinator({ _id, centerId, carrier }, { can }) {
+    can('read', 'user')
     can('update', 'user', { _id })
     can('read', 'center')
     can('read', 'merchandise')
-    can('read', 'user')
     can('create', 'merchandise')
     can('read', 'beneficiary', { carrier })
     can('update', 'beneficiary', { carrier })
