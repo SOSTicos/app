@@ -37,6 +37,8 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
     if (!user) router.replace('/signin')
   }, [user])
 
+  const isAdmin = ['superadmin', 'admin'].includes(user.role)
+
   const data = beneficiaries
 
   const renderItem = (item) => {
@@ -78,7 +80,7 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
   return (
     <Layout user={user} my={0} mx={1}>
       <Typography variant="h1" gutterBottom>
-        Mis Entregas
+        {isAdmin ? 'Todas las Entregas' : 'Mis Entregas'}
       </Typography>
       <Box
         display="flex"
@@ -99,9 +101,22 @@ export const getServerSideProps = async (ctx) => {
 
   let beneficiaries = []
 
-  const deliveryQuery = {
+  let deliveryQuery = {
     carrier: session.user._id,
     deliveryStatus: '1',
+  }
+
+  if (session.user && session.user.role === 'coordinator') {
+    deliveryQuery = {
+      ...deliveryQuery,
+      centerId: session.user.centerId,
+    }
+  }
+
+  if (session.user && ['superadmin', 'admin'].includes(session.user.role)) {
+    deliveryQuery = {
+      deliveryStatus: '1',
+    }
   }
 
   try {

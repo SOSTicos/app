@@ -53,8 +53,14 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
   const isAuth = Boolean(user)
 
   let canManageCenters = false
+  let canSeeDeliveries = false
+  let isAdmin = false
+  let hasCenterId = false
   if (isAuth) {
     canManageCenters = ['superadmin', 'admin'].includes(user.role)
+    canSeeDeliveries = ['superadmin', 'admin', 'coordinator', 'carrier'].includes(user.role)
+    isAdmin = ['superadmin', 'admin'].includes(user.role)
+    hasCenterId = user.centerId
   }
 
   const onMenu = (event) => {
@@ -125,10 +131,12 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 <ListItemText primary={i18n`Registrar`} />
               </MenuItem>
               <Divider />
-              {isAuth && canManageCenters && (
+              {isAuth && canSeeDeliveries && (
                 <MenuItem key="deliveries_01" onClick={() => navigate('/deliveries')}>
                   <PeopleAlt color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Mis Entregas`} />
+                  <ListItemText
+                    primary={i18n`${isAdmin ? 'Todas las Entregas' : 'Mis Entregas'}`}
+                  />
                 </MenuItem>
               )}
               <Divider />
@@ -138,27 +146,29 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                   <ListItemText primary={i18n`Centros`} />
                 </MenuItem>
               )}
-              {isAuth && [
-                <MenuItem key="merchandise_01" onClick={() => navigate('/merchandise')}>
-                  <ShoppingCartIcon color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Listado de donativos`} />
-                </MenuItem>,
-                <MenuItem key="merchandise_02" onClick={() => navigate('/merchandise/reception')}>
-                  <ShoppingCartIcon color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Recepción de donativo`} />
-                </MenuItem>,
-              ]}
+              {isAuth &&
+                (hasCenterId || isAdmin) && [
+                  <MenuItem key="merchandise_01" onClick={() => navigate('/merchandise')}>
+                    <ShoppingCartIcon color="primary" className={styles.icon} />
+                    <ListItemText primary={i18n`Listado de donativos`} />
+                  </MenuItem>,
+                  <MenuItem key="merchandise_02" onClick={() => navigate('/merchandise/reception')}>
+                    <ShoppingCartIcon color="primary" className={styles.icon} />
+                    <ListItemText primary={i18n`Recepción de donativo`} />
+                  </MenuItem>,
+                ]}
               <Divider />
-              {isAuth && [
-                <MenuItem key="beneficiaries_01" onClick={() => navigate('/beneficiaries')}>
-                  <SupervisedUserCircle color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Beneficiarios`} />
-                </MenuItem>,
-                <MenuItem key="volunteers_01" onClick={() => navigate('/volunteers')}>
-                  <PeopleAlt color="primary" className={styles.icon} />
-                  <ListItemText primary={i18n`Voluntarios`} />
-                </MenuItem>,
-              ]}
+              {isAuth &&
+                isAdmin && [
+                  <MenuItem key="beneficiaries_01" onClick={() => navigate('/beneficiaries')}>
+                    <SupervisedUserCircle color="primary" className={styles.icon} />
+                    <ListItemText primary={i18n`Beneficiarios`} />
+                  </MenuItem>,
+                  <MenuItem key="volunteers_01" onClick={() => navigate('/volunteers')}>
+                    <PeopleAlt color="primary" className={styles.icon} />
+                    <ListItemText primary={i18n`Voluntarios`} />
+                  </MenuItem>,
+                ]}
               <Divider />
               {isAuth && (
                 <MenuItem

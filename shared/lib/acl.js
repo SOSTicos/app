@@ -2,6 +2,8 @@ const { isFunction, isObject } = require('lodash')
 const { Ability, AbilityBuilder, subject } = require('@casl/ability')
 const { createError } = require('./utils')
 
+// Resource name is defined here and used in other files
+// Doesn't need to match the mongoDB naming
 const permissions = {
   member({ _id }, { can }) {
     can('update', 'user', { _id })
@@ -13,20 +15,23 @@ const permissions = {
     can('read', 'user', { _id })
     can('read', 'center')
   },
-  carrier({ _id }, { can }) {
+  carrier({ _id, carrier }, { can }) {
     can('update', 'user', { _id })
-    can('read', 'user', { _id })
+    can('read', 'user')
     can('read', 'center')
+    can('read', 'beneficiary', { carrier })
+    can('update', 'beneficiary', { carrier })
   },
-  coordinator({ centerId }, { can }) {
+  coordinator({ _id, centerId, carrier }, { can }) {
     can('read', 'user')
+    can('update', 'user', { _id })
     can('read', 'center')
-    can('read', 'beneficiary')
-    can('update', 'beneficiary')
     can('read', 'merchandise')
-    can('read', 'user')
     can('create', 'merchandise')
-    can('manage', 'all', { centerId })
+    can('read', 'beneficiary', { carrier })
+    can('update', 'beneficiary', { carrier })
+    can('read', 'beneficiary', { centerId })
+    can('update', 'beneficiary', { centerId })
   },
   admin(_, { can }) {
     can('manage', 'all')
