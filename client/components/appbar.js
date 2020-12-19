@@ -56,10 +56,12 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
   let canSeeDeliveries = false
   let isAdmin = false
   let hasCenterId = false
+  let canSeeBeneficiaries = false
   if (isAuth) {
     canManageCenters = ['superadmin', 'admin'].includes(user.role)
     canSeeDeliveries = ['superadmin', 'admin', 'coordinator', 'carrier'].includes(user.role)
     isAdmin = ['superadmin', 'admin'].includes(user.role)
+    canSeeBeneficiaries = ['superadmin', 'admin', 'coordinator'].includes(user.role)
     hasCenterId = user.centerId
   }
 
@@ -159,16 +161,18 @@ const AppBar = ({ user, title = '', backLabel, onBack }) => {
                 ]}
               <Divider />
               {isAuth &&
-                isAdmin && [
+                canSeeBeneficiaries &&
                   <MenuItem key="beneficiaries_01" onClick={() => navigate('/beneficiaries')}>
                     <SupervisedUserCircle color="primary" className={styles.icon} />
                     <ListItemText primary={i18n`Beneficiarios`} />
-                  </MenuItem>,
+                  </MenuItem>
+                }
+              { isAuth && isAdmin &&
                   <MenuItem key="volunteers_01" onClick={() => navigate('/volunteers')}>
                     <PeopleAlt color="primary" className={styles.icon} />
                     <ListItemText primary={i18n`Voluntarios`} />
-                  </MenuItem>,
-                ]}
+                  </MenuItem>
+              }
               <Divider />
               {isAuth && (
                 <MenuItem
