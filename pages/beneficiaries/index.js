@@ -159,15 +159,23 @@ export const getServerSideProps = async (ctx) => {
   let beneficiariesApproved = []
   let beneficiariesCritical = []
   let beneficiaries = []
+
+  let querry = {};
+  if(session.user && session.user.role === 'coordinator') {
+    querry = {
+      centerId: session.user.centerId
+    }
+  }
+
   try {
     beneficiariesPending = session.user
-      ? await api.get(`${host}/api/beneficiaries`, { status: '0' }, { headers })
+      ? await api.get(`${host}/api/beneficiaries`, { ...querry ,status: '0' }, { headers })
       : []
     beneficiariesApproved = session.user
-      ? await api.get(`${host}/api/beneficiaries`, { status: '2' }, { headers })
+      ? await api.get(`${host}/api/beneficiaries`, { ...querry ,status: '2' }, { headers })
       : []
     beneficiariesCritical = session.user
-      ? await api.get(`${host}/api/beneficiaries`, { status: '3' }, { headers })
+      ? await api.get(`${host}/api/beneficiaries`, { ...querry ,status: '3' }, { headers })
       : []
     beneficiaries = beneficiariesCritical.concat(beneficiariesPending).concat(beneficiariesApproved)
     beneficiaries = beneficiaries.map((b) => {
