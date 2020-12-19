@@ -61,7 +61,7 @@ const BeneficiaryList = ({ user, beneficiaries = [] }) => {
   useEffect(() => {
     if (!user) router.replace('/signin')
     // Return all non admin users to home
-    if (!['superadmin', 'admin'].includes(user.role)) router.replace('/')
+    if (!['superadmin', 'admin', 'coordinator'].includes(user.role)) router.replace('/')
   }, [user])
 
   const onSearch = async (keyword) => {
