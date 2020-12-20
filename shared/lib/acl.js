@@ -28,6 +28,7 @@ const permissions = {
     can('read', 'center')
     can('read', 'merchandise')
     can('create', 'merchandise')
+    can('create', 'beneficiary')
     can('read', 'beneficiary', { carrier })
     can('update', 'beneficiary', { carrier })
     can('read', 'beneficiary', { centerId })

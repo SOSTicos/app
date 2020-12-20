@@ -6,7 +6,7 @@ const { protect } = api.auth
 
 const fetch = ({ user, query }) => {
   // return api.users.fetch({ query: { role: 'carrier' }, user });
-  query = { role: 'carrier' }
+  query = { $or: [{ role: 'carrier' }, { role: 'coordinator' }] }
   return api.users.fetch({ ...query, user })
 }
 
