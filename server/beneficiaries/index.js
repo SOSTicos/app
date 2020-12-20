@@ -54,20 +54,7 @@ module.exports = ({ db }) => {
     if (id) {
       res = await beneficiaries.findById(id)
     } else {
-      let dbQuery = {}
-      if (query.centerId) {
-        const { deliveryStatus, centerId, carrier } = query
-        dbQuery = {
-          $or: [
-            { deliveryStatus, carrier },
-            { deliveryStatus, centerId },
-          ],
-        }
-      } else {
-        dbQuery = query
-      }
-
-      res = await beneficiaries.findMany(dbQuery)
+      res = await beneficiaries.findMany(query)
     }
 
     if (!res) throw createError('No se encontró el beneficiario', 404)

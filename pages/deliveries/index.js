@@ -106,13 +106,6 @@ export const getServerSideProps = async (ctx) => {
     deliveryStatus: '1',
   }
 
-  if (session.user && session.user.role === 'coordinator') {
-    deliveryQuery = {
-      ...deliveryQuery,
-      centerId: session.user.centerId,
-    }
-  }
-
   if (session.user && ['superadmin', 'admin'].includes(session.user.role)) {
     deliveryQuery = {
       deliveryStatus: '1',
@@ -120,9 +113,26 @@ export const getServerSideProps = async (ctx) => {
   }
 
   try {
-    beneficiaries = session.user
-      ? await api.get(`${host}/api/beneficiaries`, deliveryQuery, { headers })
-      : []
+    if (session.user) {
+      beneficiaries = await api.get(`${host}/api/beneficiaries`, deliveryQuery, { headers })
+      if (session.user.role === 'coordinator') {
+        const centerBeneficiaries = await api.get(
+          `${host}/api/beneficiaries`,
+          { deliveryStatus: '1', centerId: session.user.centerId },
+          { headers }
+        )
+        beneficiaries = beneficiaries.concat(centerBeneficiaries)
+        beneficiaries = beneficiaries.reduce((uniques, item) => {
+          const exist = uniques.filter((v) => v._id === item._id)
+          if (exist.length === 0) {
+            uniques.push(item)
+          }
+
+          return uniques
+        }, [])
+      }
+    }
+
     beneficiaries = beneficiaries.map((b) => {
       return {
         ...b,
