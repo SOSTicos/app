@@ -35,6 +35,10 @@ module.exports = ({ db, secret, signInTokenTTL, accessTokenTTL }) => {
       throw createError('Email no encontrado', 404)
     }
 
+    if (user.blocked) {
+      throw createError('El usuario esta bloqueado.', 404)
+    }
+
     const ttl = signInTokenTTL
     const data = await createTokenData({ email, ttl })
 

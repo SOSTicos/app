@@ -14,6 +14,7 @@ import Layout from '../../client/components/layout'
 import Autocomplete from '../../client/components/autocomplete'
 import Button from '../../client/components/button'
 import Input from '../../client/components/input'
+import CheckboxInput from '../../client/components/checkboxinput'
 import Line from '../../client/components/line'
 import Select from '../../client/components/select'
 import { getSession, getHeaders } from '../../client/lib/auth'
@@ -53,6 +54,8 @@ const useStyles = makeStyles((theme) => ({
 const VolunteerDetail = ({ user, data, centers = [] }) => {
   const [submitting, setSubmitting] = useState(false)
   const [editting, setEditting] = useState(false)
+  const [blocked, setBlocked] = useState(data.blocked ? true : false)
+  //const [isFirstLoad, setFirstLoad] = useState(true)
   const router = useRouter()
   const styles = useStyles()
   const api = useApi()
@@ -73,6 +76,7 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
       district: data?.district || '',
       address: data?.address || '',
       center: data?.centerId ? find(centers, { _id: data?.centerId }) : {},
+      blocked: false,
     },
   })
 
@@ -82,15 +86,15 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
   const cantons = province ? Object.keys(all[province] || {}) : []
   const districts = cantons.length > 0 ? Object.keys(all[province][canton] || {}) : []
 
+  const handleChange = (event) => {
+    let isBlocked = event.target.checked
+    setBlocked(isBlocked)
+    console.log('set blocked to ' + isBlocked)
+  }
+
   useEffect(() => {
     if (!user) router.replace('/signin')
   }, [user])
-
-  // useEffect(() => {
-  //   if (province && !provinces.includes(province)) {
-  //     setValue('province', '')
-  //   }
-  // }, [provinces, province])
 
   useEffect(() => {
     if (canton && !cantons.includes(canton)) {
@@ -115,6 +119,7 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
       district: data.district,
       address: data.address,
       centerId: data?.center?._id,
+      blocked: data.blocked ? true : false,
     }
   }
 
@@ -122,6 +127,7 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
     try {
       setSubmitting(true)
       data = normalize(data)
+      data.blocked = blocked
       await api.users.update({ ...data, id: userId })
       notify(i18n`Voluntario actualizado`, { variant: 'success' })
     } catch (error) {
@@ -130,6 +136,7 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
     } finally {
       setSubmitting(false)
       setEditting(false)
+      location.reload()
     }
   }
 
@@ -272,6 +279,13 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
             rules={{ required: i18n`Requerido` }}
           />
 
+          <CheckboxInput
+            name="blocked"
+            checked={blocked}
+            onChange={handleChange}
+            label={i18n`Bloqueado`}
+          />
+
           <Button
             style={{ marginBottom: 0 }}
             type="submit"
@@ -296,6 +310,7 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
           {data.address && <Line label={i18n`Otras señas`} value={data.address} />}
           {center && center._id && <Line label={i18n`Centro de acopio`} value={center.name} />}
           {data.role && <Line label={i18n`Rol`} value={role.label} />}
+          {data.blocked && <Line label={i18n`BLOCKED`} value={data.blocked} />}
         </Paper>
       )}
     </Layout>
