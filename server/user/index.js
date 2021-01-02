@@ -18,6 +18,7 @@ module.exports = ({ db, superadmin, seed }) => {
     'canton',
     'district',
     'address',
+    'blocked',
   ]
 
   const setIndexes = async () => {
@@ -36,13 +37,14 @@ module.exports = ({ db, superadmin, seed }) => {
   const normalize = (data) => {
     return {
       loginCount: 0,
-      name: data.name,
-      docId: data.docId,
+      name: data.name?.trim(),
+      docId: data.docId?.trim(),
       role: data.role || 'member',
-      email: data.email.toLowerCase(),
+      email: data.email.toLowerCase()?.trim(),
       phone: data.phone ? toPhone(data.phone) : null,
       updatedAt: data.updateAt || Date.now(),
       createdAt: data.createdAt || Date.now(),
+      blocked: Boolean(data.blocked),
     }
   }
 

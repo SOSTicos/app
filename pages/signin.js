@@ -35,7 +35,7 @@ const Signin = () => {
 
   const onSubmit = async () => {
     try {
-      await signin(email)
+      await signin(email.trim())
     } catch (error) {
       console.log('error', error)
       notify('Correo inválido', { variant: 'error' })
