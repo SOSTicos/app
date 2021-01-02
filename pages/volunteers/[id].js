@@ -85,7 +85,6 @@ const VolunteerDetail = ({ user, data, centers = [] }) => {
   const provinces = Object.keys(all)
   const cantons = province ? Object.keys(all[province] || {}) : []
   const districts = cantons.length > 0 ? Object.keys(all[province][canton] || {}) : []
-  let firstSetBlocked = true
 
   const handleChange = (event) => {
     let isBlocked = event.target.checked
